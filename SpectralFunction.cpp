@@ -130,8 +130,8 @@ int main(int argc, const char * argv[]) {
                     double x = epsI( KXs[kx], KYs[ky] );
                     for (int n = 0; n < N ; n++){
                         for (int m = 0 ; m < N ; m++){
-                            A ( n , m ) = ( 0.5 * n * (n - 1) - muU * n - omega0U) * delta( n , m ) -  JkU(dJU, 0) * psi0 * ( sqrt( n ) * delta( n , m + 1) + sqrt( m ) * delta( n + 1 , m ) )- JkU(dJU, x) * ( sqrt( n ) * sqrt( m ) * cn( cns , m - 1 ) * cn( cns , n - 1 ) + sqrt( n + 1 ) * sqrt( m + 1 ) * cn( cns , m + 1 ) * cn( cns , n + 1 ) );
-                            B ( n , m ) = - JkU(dJU, x) * ( sqrt( n ) * sqrt( m + 1 ) * cn( cns , m + 1 ) * cn( cns , n - 1 ) + sqrt( n + 1 ) * sqrt( m ) * cn( cns , m - 1 ) * cn( cns , n + 1 ) ); //V:  TBC
+                            A ( n , m ) = ( 0.5 * n * (n - 1) - muU * n - omega0U) * delta( n , m ) -  JkU(dJU, 0) * psi0 * ( sqrt( n ) * delta( n , m + 1) + sqrt( m ) * delta( n + 1 , m ) )- JkU(dJU, x) * ( sqrt( n ) * sqrt( m ) * cn( cns , m - 1 ) * cn( cns , n - 1 ) + sqrt( n + 1 ) * sqrt( m + 1 ) * cn( cns , m + 1 ) * cn( cns , n + 1 ) ); //V:  Fabio's "H".  Checked
+                            B ( n , m ) = - JkU(dJU, x) * ( sqrt( n ) * sqrt( m + 1 ) * cn( cns , m + 1 ) * cn( cns , n - 1 ) + sqrt( n + 1 ) * sqrt( m ) * cn( cns , m - 1 ) * cn( cns , n + 1 ) ); //V:  Fabio's "K".  Checked
                         }
                     }
                     
