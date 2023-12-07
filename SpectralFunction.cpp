@@ -4,6 +4,7 @@
 //
 //  Created by Ragheed Alhyder on 24/10/2022.
 //
+//V:  This is the main file
 
 #include "FunctionsSF.h"
 
@@ -14,14 +15,14 @@ int main(int argc, const char * argv[]) {
     
     fstream imported("/Users/ragheed/Library/Mobile Documents/com~apple~CloudDocs/Aarhus/Projects/MottSuperfluidBosePolaron/MISFtransitionBH/DataPoints/NewData/nbar01.txt", std::ios_base::in);
     double a, b;
-    int dim = 100;
+    int dim = 100; //V:  How fine of a grid in the J.  
     double dJUs[dim];
     double muUs[dim];
     int i = 0;
     while ( imported >> a >> b)
     {
         dJUs[i] = a;
-        muUs[i] = b;
+        muUs[i] = b; //V:  Load the values of mu and J.  
 //        cout << dJUs[i] << '\t' << muUs[i] << endl;
         i++;
     }
@@ -53,14 +54,14 @@ int main(int argc, const char * argv[]) {
     //
     //        cout << (double) (count + 1) / Max + 0.168 << endl;
     //    }
-    mat n0s = mat(Max, Max, fill::zeros);
+    mat n0s = mat(Max, Max, fill::zeros); //V:  Allocating the arrays.  
     vec sigma0s, sigma1s, sigma2s, sigmapols, T11s, T12s, T21s, T2200s, T22s;
     sigma0s = sigma1s = sigma2s = sigmapols = T11s =  T12s =  T21s = T2200s =  T22s = vec(Max, fill::zeros);
     
     double Epol = 0.14;
     
     
-    for (int cutoff = 2; cutoff <= 2 ;cutoff ++)
+    for (int cutoff = 2; cutoff <= 2 ;cutoff ++) //V:  Steps through the modes.  I would rather cutoff be a parameter at the top.  This for loop isn't looping through anything...
     {
         std::string s1 = std::to_string(cutoff);
         std::string s2 = std::to_string(M);
@@ -74,13 +75,13 @@ int main(int argc, const char * argv[]) {
         ofstream myfile1;
         myfile1.open(var); // Change this too
        
-        for(int count = 1; count < 69 ; count ++){
+        for(int count = 1; count < 69 ; count ++){  //V:  Steps through the hopping
 
             dJU = (double) (count) / Max ;
             dJU = dJUs[count];
             muU = muUs[count];
 
-            cout << count << "\t dJU = " << dJU << "\t muU = " << muU << endl;
+            cout << count << "\t dJU = " << dJU << "\t muU = " << muU << endl; //V:  Displays output to the screen
             
             mat Mat = mat(N, N, fill::zeros);
             mat  A  = mat(N, N, fill::zeros);
@@ -88,10 +89,11 @@ int main(int argc, const char * argv[]) {
             double uks[N][M][M][N], vks[N][M][M][N], omegaklambda[N][M][M];
             double psi0 = 1;
             
-            cx_vec Eigvals;
+            cx_vec Eigvals; //V:  Complex vector
             vec cns;
             cx_mat Eigvecs;
             
+            //V:  At each hopping we generate the EL equations to find the ground state.  Speed:  There is an i,j symmetry.  
             for (int k = 0 ; k < 2; k++){      // Solving the equation of motion self-consistently we find the coefficients cn
                 for (int i = 0 ; i < N; i++){
                     for (int j = 0 ; j < N; j++){
@@ -101,10 +103,10 @@ int main(int argc, const char * argv[]) {
                 }
                 
                 eig_gen(Eigvals, Eigvecs, Mat);
-                uvec ind = find( real(Eigvals) == min(real(Eigvals)) );
-                cns = abs(real( Eigvecs.col(ind(0)) ));
+                uvec ind = find( real(Eigvals) == min(real(Eigvals)) ); //V:  we find the ground state.
+                cns = abs(real( Eigvecs.col(ind(0)) )); // we evaluate the cns for the ground state.
                 
-                psi0 = Psi0(cns);
+                psi0 = Psi0(cns);  //V: we evaluate hte c's self-consistently.  Is there a better way to do this, I don't do it like this but maybe it's okay... [?]
             }
             
             
@@ -112,27 +114,28 @@ int main(int argc, const char * argv[]) {
             double omega0U = 0;
             
             for (int n = 0 ; n < N; n++){
-                n0 = n0 + n * real(cns(n)) * real(cns(n));
-                omega0U = omega0U + ( 0.5 * n * (n - 1) - muU * n)  * real(cns(n)) * real(cns(n));
+                n0 = n0 + n * real(cns(n)) * real(cns(n));  //V:  the mean field filling factor
+                omega0U = omega0U + ( 0.5 * n * (n - 1) - muU * n)  * real(cns(n)) * real(cns(n));  //V:  THe Hnn (see Eq. 7 in mixtures).  
             }
             
             n0s(count) = n0;
-            omega0U = - 2 * dJU * psi0 * psi0 + omega0U;
+            omega0U = - 2 * dJU * psi0 * psi0 + omega0U; //V:  Ground state energy.  See Eq. 9 in mixtures.  
             cout << cns << endl;
             cout << "n0 = " << n0 << endl;
             cout << "Omega0U =" << omega0U << endl;
             
-            
+            //V:  Excitations.  Speed:  many symmetries in the k's, n's, and m's to leverage here.  
             for (int kx = 0; kx < M ; kx ++){
                 for (int ky = 0; ky < M ; ky ++){
                     double x = epsI( KXs[kx], KYs[ky] );
                     for (int n = 0; n < N ; n++){
                         for (int m = 0 ; m < N ; m++){
                             A ( n , m ) = ( 0.5 * n * (n - 1) - muU * n - omega0U) * delta( n , m ) -  JkU(dJU, 0) * psi0 * ( sqrt( n ) * delta( n , m + 1) + sqrt( m ) * delta( n + 1 , m ) )- JkU(dJU, x) * ( sqrt( n ) * sqrt( m ) * cn( cns , m - 1 ) * cn( cns , n - 1 ) + sqrt( n + 1 ) * sqrt( m + 1 ) * cn( cns , m + 1 ) * cn( cns , n + 1 ) );
-                            B ( n , m ) = - JkU(dJU, x) * ( sqrt( n ) * sqrt( m + 1 ) * cn( cns , m + 1 ) * cn( cns , n - 1 ) + sqrt( n + 1 ) * sqrt( m ) * cn( cns , m - 1 ) * cn( cns , n + 1 ) );
+                            B ( n , m ) = - JkU(dJU, x) * ( sqrt( n ) * sqrt( m + 1 ) * cn( cns , m + 1 ) * cn( cns , n - 1 ) + sqrt( n + 1 ) * sqrt( m ) * cn( cns , m - 1 ) * cn( cns , n + 1 ) ); //V:  TBC
                         }
                     }
                     
+                    //V:  Compare with how I do [?].
                     mat AB = join_rows(A,B);
                     mat BA = join_rows(-B,-A);
                     mat MatAB = join_cols(AB,BA);
@@ -144,17 +147,17 @@ int main(int argc, const char * argv[]) {
                         omegaklambda[lambda][kx][ky]= omega0(lambda);
                         bool doublezero = false;
                         if (lambda == 0){
-                            uvec ind = find(floor(10 * abs(real(Eigvals))) == floor(10 * abs(omega0(lambda))) );
+                            uvec ind = find(floor(10 * abs(real(Eigvals))) == floor(10 * abs(omega0(lambda))) ); //V:  I think I have to do similar [?]
                             
                             if (ind.size() > 2){
                                 doublezero = true;
                             }
                             
                             for (int n = 0; n < N; n++){
-                                uks[n][kx][ky][lambda] = cns(n);
+                                uks[n][kx][ky][lambda] = cns(n); //Load the lambda = 0 parts of the u's and v's.  
                                 vks[n][kx][ky][lambda] = 0;
                             }
-                            omegaklambda[lambda][kx][ky] = 0;
+                            omegaklambda[lambda][kx][ky] = 0; //Set the excitation energy for lambda = 0 to 0.  
                             //                        cout << cns << endl;
                             
                         }
@@ -167,13 +170,13 @@ int main(int argc, const char * argv[]) {
                             if (ind.size() > 1){
                                 ind1 = ind(1);
                             }
-                            double Norm = 0;
+                            double Norm = 0; //V:  Normalize the eigenvectors
                             
                             for (int n = 0; n < N; n++){
                                 //                            cout << real(Eigvecs(n, ind1))  << '\t' << real(Eigvecs(N + n, ind1))  << endl;
                                 Norm = Norm + pow(  real(Eigvecs(n, ind1)), 2 )  - pow( real(Eigvecs(N + n, ind1)) , 2 );
                             }
-                            if (round(10E6 * Norm) <= 0)
+                            if (round(10E6 * Norm) <= 0) //V:  What is this [?]  What do I do in my code.  
                                 Norm = 1;
                             for (int n = 0; n < N; n++){
                                 uks[n][kx][ky][lambda] = real(Eigvecs(n, ind1)) / sqrt(Norm);
@@ -187,7 +190,7 @@ int main(int argc, const char * argv[]) {
             }
 
             //     Sigma0 zeroth term of self energy
-            
+            //V:  Speed: symmetry in k's.  
             double deltan2 = 0;
             for (int kx = 0 ; kx < M; kx++){
                 for (int ky = 0 ; ky < M; ky++){
@@ -197,17 +200,18 @@ int main(int argc, const char * argv[]) {
                 }
             }
             
-            sigma0s(count) = UIB * (n0 +  deltan2);
+            sigma0s(count) = UIB * (n0 +  deltan2); //V:  The mf contribution plus qm correction.
             cout << "sig0 = " << sigma0s(count) << endl;
 
             double Sigma1 = 0;
             double res = 0;
             
+            //V:  Frohlich UIB^2.  Speed:  symmetry in k's.  
             for (int kx = 0 ; kx < M; kx++){
                 for (int ky = 0 ; ky < M; ky++){
                     for (int lambda = 1 ; lambda <= cutoff; lambda++){
                         double Nkres = Nk(kx, ky, lambda, cns, uks, vks, KXs, KYs);
-                        res = real(pow(UIB / (2 * pi),2) * dkxs[kx] * dkys[ky] * abs( pow( Nkres , 2 )) / ( -  omegaklambda[ lambda][ kx][ ky ]  - dJU * epsI( KXs[kx], KYs[ky] ) + 1i * 0.0001));
+                        res = real(pow(UIB / (2 * pi),2) * dkxs[kx] * dkys[ky] * abs( pow( Nkres , 2 )) / ( -  omegaklambda[ lambda][ kx][ ky ]  - dJU * epsI( KXs[kx], KYs[ky] ) + 1i * 0.0001)); //V:  Make this eps uniform throughout as a parameter
                         Sigma1 = Sigma1 + res;
                         if (isnan(res))
                         {
@@ -220,7 +224,7 @@ int main(int argc, const char * argv[]) {
             sigma1s (count) = Sigma1;
             cout << "sig1 = " << sigma1s(count) << endl;
             double Sigma2 = 0;
-            
+            //V:  the beyond frohlich term.  Speed:  symmetries in k, p, lambda, 
             for (int lambda = 1 ; lambda <= cutoff; lambda++){
                 for (int lambda1 = 1 ; lambda1 <= cutoff; lambda1++){
                     for (int kx = 0 ; kx < M; kx++){
@@ -240,15 +244,15 @@ int main(int argc, const char * argv[]) {
             }
             
             sigma2s (count) = Sigma2;
-            
+            //V:  Output perturbative to files
 //            myfile << dJU << "\t" << sigma0s(count) + sigma1s (count) + sigma2s (count) << endl;
 //            myfile.close();
             cout << "sig2 = " << Sigma2 << endl;
 //            cout << cutoff << "\t" << dJU << "\t" << sigma0s(count) << "\t" << sigma1s(count) << "\t" << sigma2s(count) << endl;
             myfile1 << dJU << "\t" << sigma0s(count) << "\t" << sigma1s(count) << "\t" << sigma2s(count) << endl; // Write out perturbative result
 
-
-            for (Epol = 0.01; Epol <= 0.30; Epol += 0.00005){
+            //V:  The ladder result (see FunctionsSF.cpp)
+            for (Epol = 0.01; Epol <= 0.30; Epol += 0.00005){ //V:  The energy range to plot spectral function over.  This is a super tiny increment!
                 cx_vec sig1vec = SigmaPolaron (Epol , KXs,  KYs,  dkxs, dkys, uks, vks, omegaklambda, dJU, n0, UIB, cutoff);
 //                double sig1 = real(sig1vec(0));
 //                cout << sig1 << endl;

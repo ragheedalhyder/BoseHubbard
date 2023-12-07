@@ -2,8 +2,10 @@
 
 //int L = 9; // Number of lattice sites in the X and Y directions (Lx = Ly = L)
 //int M = L + 1;
+//V:  N is fock state index.  M is number of sites in each direction.  
 
-int delta(int x, int y) {
+//V:  delta function 
+int delta(int x, int y) {  
     if (x == y)
         return 1;
     else
@@ -11,6 +13,7 @@ int delta(int x, int y) {
 }
 ///
 ///
+//V:  ?
 double cn(vec cns, int n){
     if(n == - 1)
         return 0;
@@ -22,6 +25,7 @@ double cn(vec cns, int n){
 }
 ///
 ///
+//V:  Condensate order parameter
 double Psi0(vec cns){
     double Psi0 = 0;
     for(long i = 1; i < N; i++){
@@ -31,16 +35,19 @@ double Psi0(vec cns){
 }
 ///
 ///
+//V:  Free particle dispersion 
 double JkU(double dJU, double x){
     return dJU - dJU * x;
 }
 ///
 ///
+//V:  Free particle dispersion 
 double epsI(double kx, double ky){
     return pow(sin( kx / 2 ),2) + pow(sin( ky / 2 ),2);
 }
 ///
 ///
+//V:  U vertex [X].  uks seems bigger than we need [?]
 double U(int kx, int ky, int lambda, int qx, int qy, int lambda1, double uks[N][M][M][N], double KXs[M], double KYs[M], double n0 ){
     double Ures = 0;
 //    if(KXs[kx] == 0 && KYs[ky] == 0 && lambda == 1)
@@ -54,6 +61,7 @@ double U(int kx, int ky, int lambda, int qx, int qy, int lambda1, double uks[N][
 }
 ///
 ///
+//V:  V vertex [X].  
 double V(int kx, int ky, int lambda, int qx, int qy, int lambda1, double vks[N][M][M][N], double KXs[M], double KYs[M], double n0 ){
     double Vres = 0;
 //    if(KXs[kx] == 0 && KYs[ky] == 0 && lambda == 1)
@@ -67,6 +75,7 @@ double V(int kx, int ky, int lambda, int qx, int qy, int lambda1, double vks[N][
 }
 ///
 ///
+//V:  This is the W from my prl, not the one in the SM.  [?]
 double W(int kx, int ky, int lambda, int qx, int qy, int lambda1, double uks[N][M][M][N], double vks[N][M][M][N], double KXs[M], double KYs[M], double n0 ){
     double Wres = 0;
 //    if(KXs[kx] == 0 && KYs[ky] == 0 && lambda == 1)
@@ -85,6 +94,7 @@ double W(int kx, int ky, int lambda, int qx, int qy, int lambda1, double uks[N][
 }
 ///
 ///
+//V:  The Nk for Frohlich
 double Nk(int kx, int ky, int lambda, vec cns, double uks[N][M][M][N], double vks[N][M][M][N], double KXs[M], double KYs[M]){
     double Nkres = 0;
 //    if(KXs[kx] == 0 && KYs[ky] == 0 && lambda == 1)
@@ -103,15 +113,15 @@ double Nk(int kx, int ky, int lambda, vec cns, double uks[N][M][M][N], double vk
 
 cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], double dkys[M], double uks[N][M][M][N], double vks[N][M][M][N], double omegaklambda[N][M][M], double dJU, double n0, double UIB, int cutoff){
 //    cutoff = 5;
-    int dim =  M * M * (cutoff + 1) ;
+    int dim =  M * M * (cutoff + 1) ; //V: Trick used to reduce dimensionality.  Maybe not speed?
 //    double eta = 0.00000001;
-    double eta = 0.003;
+    double eta = 0.003; //V: Just make this a parameter that is set for instance in the header and gets used in both .cpp files.  
     eta = 0.0001;
     mat Us = mat(dim, dim, fill::zeros);
     mat Vs = mat(dim, dim, fill::zeros);
     mat Ws = mat(dim, dim, fill::zeros);
     
-    cx_mat PI1100, PI1121, PI21, PI12, PI2200, PI22, inv11, inv22, inv12;
+    cx_mat PI1100, PI1121, PI21, PI12, PI2200, PI22, inv11, inv22, inv12; //V:  PI stands for propagator.  
     
     cx_mat T1100, T1200, T1121, T1222, T2100, T2200, T12, T22 ;
     
@@ -129,7 +139,7 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
     double epsminus = 0;
     bool ZeroIndx1 = true;
     bool ZeroIndx2 = true;
-    for (int lambda = 0; lambda <= cutoff; lambda++){
+    for (int lambda = 0; lambda <= cutoff; lambda++){  //V:  Speedup:  lambda, k,q, symmetries as these are dummy indices.  Seems like these matrices are huge but should be size of the W's.  So okay...  Still could be sped up a lot.  
         for (int lambda1 = 0 ; lambda1 <= cutoff; lambda1++){
             for (int kx1 = 0 ; kx1 < M; kx1++){
                 for (int ky1 = 0 ; ky1 < M; ky1++){
@@ -141,11 +151,11 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
                             qx = qx1;
                             qy = qy1;
                             
-                            indk = lambda * M * M + kx * M + ky;
+                            indk = lambda * M * M + kx * M + ky; //V:  Row index in the matrix of 8.16 SM this is.  
                             
-                            indq = lambda1 * M * M + qx * M + qy;
+                            indq = lambda1 * M * M + qx * M + qy; //V:  Column index ...
 
-                            if (lambda == 0 && KXs[kx] == 0 && KYs[ky] == 0 && ZeroIndx1 == true){
+                            if (lambda == 0 && KXs[kx] == 0 && KYs[ky] == 0 && ZeroIndx1 == true){//V:  Tells you the row/column for process with two condensate external lines.  Speed:  We only need to calculate this one, we don't even need the rest of the momentum...?
                                 indk0 = indk;
                                 ZeroIndx1 = false;
                                 //cout << "indk0 = " << indk0 << endl;
@@ -161,16 +171,16 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
 //                            if (lambda == 0)
 //                                kx = ky = 5;
 
-                            Uelem = UIB * U(kx, ky, lambda, qx, qy, lambda1, uks, KXs, KYs, n0);
+                            Uelem = UIB * U(kx, ky, lambda, qx, qy, lambda1, uks, KXs, KYs, n0); //V:  Speed:  these are probably already calculated in the outer loop in SpectralFunction.cpp
 
                             Velem = UIB * V(kx, ky, lambda, qx, qy, lambda1, vks, KXs, KYs, n0);
 
-                            Welem = UIB * ( W(kx, ky, lambda, qx, qy, lambda1, uks, vks, KXs, KYs, n0) + W(qx, qy, lambda1, kx, ky, lambda, uks, vks, KXs, KYs, n0));
+                            Welem = UIB * ( W(kx, ky, lambda, qx, qy, lambda1, uks, vks, KXs, KYs, n0) + W(qx, qy, lambda1, kx, ky, lambda, uks, vks, KXs, KYs, n0));  //V:  Here is the update to the convention of the SM.  
                             
                             epsplus = epsI(  KXs[kx] + KXs[qx],  KXs[ky] + KXs[qy]);
                             epsminus = epsI(  KXs[kx] - KXs[qx],  KXs[ky] - KXs[qy]);
                             
-                            if (lambda1 == 0)
+                            if (lambda1 == 0) //V:  Only 1 momentum to sum over in the case of a 1-phonon process.
                             {
                                 epsplus = epsI(  KXs[kx], KXs[ky]);
                                 epsminus = epsI(  KXs[kx], KXs[ky]);
@@ -181,18 +191,18 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
                                 epsminus = epsI( - KXs[qx],  - KXs[qy]);
                             }
                             
-                            Den11 = Epol - omegaklambda[lambda1][qx][qy] - dJU * epsI(  KXs[qx],  KXs[qy] ) + eta * 1i;
+                            Den11 = Epol - omegaklambda[lambda1][qx][qy] - dJU * epsI(  KXs[qx],  KXs[qy] ) + eta * 1i; //V:  Denominators for 1-phonon
                             
                             Den22 = Epol - omegaklambda[lambda1][qx][qy] - dJU * epsI(  KXs[qx],  KXs[qy] ) + eta * 1i;
                             
-                            Den   = Epol - omegaklambda[lambda][kx][ky] - omegaklambda[lambda1][qx][qy] - dJU * epsplus + eta * 1i;
+                            Den   = Epol - omegaklambda[lambda][kx][ky] - omegaklambda[lambda1][qx][qy] - dJU * epsplus + eta * 1i;//V:  Denominators for 2-phonon
 //                            if (indk == indq){
 //                                cout << real(Den11) << endl;
 ////                                cout << "1." << real(Den11) << endl;
 ////                                cout << "2." << real(Den22) << endl;
 ////                                cout << "3." << real(Den) << endl;
 //                            }
-                            Us(indk,indq) =  Uelem;
+                            Us(indk,indq) =  Uelem;  //V:  Speed: these should already be tabulated in the outer loop.  
                             Vs(indk,indq) =  Velem;
                             Ws(indk,indq) =  Welem;
                             
@@ -211,7 +221,7 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
                             
                             PI12(indk,indq) = coeff * (Uelem / Den);     // Pair propagator for T12 to calculate T22
                             
-                            PI22(indk,indq) = coeff * (Welem / Den);     // Pair propagator for T22 as a function of T12
+                            PI22(indk,indq) = coeff * (Welem / Den);     // Pair propagator for T22 as a function of T12 
                             
                             
 //                            if(indk == 180 ){
@@ -229,7 +239,7 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
                                 PI21(indk,indq) = 0;
                                 PI12(indk,indq) = 0;
                                 PI2200(indk,indq) = 0;
-                                PI22(indk,indq) = 0;
+                                PI22(indk,indq) = 0; //V:  Restrition of internal lines to be phonons.  
                             }
                             
                         }
@@ -241,7 +251,7 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
     
     mat IMat = mat(dim,dim,fill::eye);
     
-    inv11 = inv ( IMat  - PI1100 );
+    inv11 = inv ( IMat  - PI1100 );  //V:  Speed:  Propably this takes a long time.  There are libraries to speed up mat inversion.  Also parallel processing.  
     inv22 = inv ( IMat  - PI1121 );
 //    inv11.print();
 //    cout << inv22.max() << endl;
@@ -257,7 +267,7 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
     
     inv12 =  inv(IMat  - PI12);
     T12 = inv12 * Ws;
-    T22 = Vs + 0.5 * PI22 * T12;
+    T22 = Vs + 0.5 * PI22 * T12;  //V:  Here is hte factor of 1/2 from double counting the direct and exchange terms.  
     
     cx_vec T22diag = diagvec(T22) ;
 //    cout << T22diag << endl;
@@ -276,18 +286,18 @@ cx_vec SigmaPolaron (double Epol, double KXs[M], double KYs[M], double dkxs[M], 
     }
 //    cout << T1100(60,0) << endl;
 //    cout << real(T11(0,0)) << "\t" << real(T12(0,0)) << "\t" << real(T21(0,0)) << "\t" << real(T2200(0,0)) << "\t" << Sigma22 << endl;
-    complex<double> sigpol = T1100(indk0,indq0) + T1200(indk0,indq0) + T2100(indk0,indq0) + T2200(indk0,indq0) + Sigma22 ;
+    complex<double> sigpol = T1100(indk0,indq0) + T1200(indk0,indq0) + T2100(indk0,indq0) + T2200(indk0,indq0) + Sigma22 ; //V:  We see the purpose of hte indk0's.  They tell us which elements correspond to external condensate lines.  
 //    sigpol = Sigma22 ;
 //    return Sigma22;
     return {real(Epol - sigpol), T1100(indk0,indq0), T12(indk0,indq0), T2100(indk0,indq0), T2200(indk0,indq0) ,Sigma22, sigpol};
 }
 
-
+//V:  THis must be old code for when you are trying to locate the poles.  I don't see it in main.  
 cx_vec FixedPoint(double sig1, double sig2, double Epol, double dEpol, double KXs[M], double KYs[M],  double dkxs[M], double dkys[M], double uks[N][M][M][N], double vks[N][M][M][N], double omegaklambda[N][M][M], double dJU, double n0, double UIB, int cutoff){
     cout << "FP \t " << Epol << endl;
     cx_vec sigmidvec = SigmaPolaron(Epol + dEpol / 2, KXs, KYs, dkxs, dkys, uks, vks, omegaklambda, dJU, n0, UIB, cutoff);
 
-    if (abs(dEpol) < epsilon){
+    if (abs(dEpol) < epsilon){   
         cout << "Epol = "<< Epol + dEpol / 2.0 << endl;
         return {Epol + dEpol / 2.0, sigmidvec(1), sigmidvec(2), sigmidvec(3), sigmidvec(4) ,sigmidvec(5)};
     }
@@ -295,7 +305,7 @@ cx_vec FixedPoint(double sig1, double sig2, double Epol, double dEpol, double KX
     double sigmid = real(sigmidvec(0));
     
     if (sig1 * sig2 > 0){
-        cout << " No Trimer Energy Values in the defined interval" << endl;
+        cout << " No Trimer Energy Values in the defined interval" << endl; //V:  Trimers...?
         return {Epol + dEpol / 2.0, sigmidvec(1), sigmidvec(2), sigmidvec(3), sigmidvec(4) ,sigmidvec(5)};
     }
     if (sig1 * sigmid < 0 ){
@@ -306,7 +316,7 @@ cx_vec FixedPoint(double sig1, double sig2, double Epol, double dEpol, double KX
     }
 }
 
-
+//V:  I also don't see this used anywhere.  
 cx_vec LimitFinder(double sig1, double Epol, double dEpol, double KXs[M], double KYs[M],  double dkxs[M], double dkys[M], double uks[N][M][M][N], double vks[N][M][M][N], double omegaklambda[N][M][M], double dJU, double n0, double UIB, int cutoff){
     cout << Epol << "\t" << sig1 << endl;
     double sig2;//, sig3, sig4, sig5, sig6= 0.;

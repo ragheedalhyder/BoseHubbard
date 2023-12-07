@@ -33,6 +33,7 @@ using namespace arma;
 #define L 9 // Number of lattice sites in the X and Y directions (Lx = Ly = L)
 #define M 10
 #define epsilon 1e-7
+//V:  I would add more definitions here for instance of eta and the cutoff.  
 
 
 int delta(int x, int y);
