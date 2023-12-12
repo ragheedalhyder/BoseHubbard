@@ -1,0 +1,23 @@
+
+# This is a YAML file. It is used to store configuration data.
+
+input: ../data/input.txt
+
+output: ../data/output.txt
+
+max_iter_psi: 5000
+
+grid:
+    N: 10
+    Lx: 9
+    Ly: 9
+    #eps: 1e-7
+
+physics:
+    Mu: "np.sqrt(2) - 1"
+    dJU:
+        start: 0.01
+        stop: 0.9
+        step: 0.01
+
+
