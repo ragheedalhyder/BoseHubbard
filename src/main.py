@@ -20,7 +20,7 @@ def main():
     # for dJU in dJUs:
     #     cns = psi(config["max_iter_psi"], config["grid"]["N"], dJU, eval(config["physics"]["Mu"]))
     #     cnslist.append(cns)
-
+#sdf
     # plot_cns(cnslist, r'$n$', r'$\bar{c}_n$', os.path.join(output_dir, "csn.png") )gi    qzd cd
 
 
