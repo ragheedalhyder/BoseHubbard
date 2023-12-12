@@ -1,9 +1,10 @@
 import numpy as np
+import os
 import utils
 from grid import Grid
 from cns import psi
 from plotting import plot2D, plot_cns
-from datetime import datetime
+
 
 def main():
     args = utils.parse_args()
@@ -16,12 +17,12 @@ def main():
 
     dJUs = np.arange(**config["physics"]["dJU"])
     print(dJUs)
-    # cnslist = []
-    # for dJU in dJUs:
-    #     cns = psi(config["max_iter_psi"], config["grid"]["N"], dJU, eval(config["physics"]["Mu"]))
-    #     cnslist.append(cns)
-#sdf
-    # plot_cns(cnslist, r'$n$', r'$\bar{c}_n$', os.path.join(output_dir, "csn.png") )gi    qzd cd
+    cnslist = []
+    for dJU in dJUs:
+        cns = psi(config["max_iter_psi"], config["grid"]["N"], dJU, eval(config["physics"]["Mu"]))
+        cnslist.append(cns)
+
+    plot_cns(cnslist, r'$n$', r'$\bar{c}_n$', os.path.join(output_dir, "csn.png") )
 
 
 if __name__ == "__main__":
