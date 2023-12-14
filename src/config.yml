@@ -5,10 +5,10 @@ input: ../data/input.txt
 
 output: ../data/output.txt
 
-max_iter_psi: 5000
+max_iter_psi: 100
 
 grid:
-    N: 10
+    N: 500
     Lx: 9
     Ly: 9
     #eps: 1e-7
