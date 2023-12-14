@@ -3,7 +3,8 @@ import os
 import utils
 from grid import Grid
 from gs import groundstate
-from plotting import plot2D, plot_cns
+from exc import excitations
+from plotting import plot2D, plot_cns, plot_omega0
 import matplotlib.pyplot as plt
 
 
@@ -20,29 +21,33 @@ def main():
     dJUs = np.arange(**config["physics"]["dJU"])
     N = config["grid"]["N"]
     muU = eval(config["physics"]["Mu"])
+
     grid = Grid(Lx, Ly)
 
-    gs = groundstate(max_iter, N, dJUs[10], muU)
+    omega0s = np.zeros(len(dJUs))
+    omega1s = np.zeros(len(dJUs))
+    omega2s = np.zeros(len(dJUs))
+    omegas = np.zeros((len(dJUs), 3))
+    for count in range(len(dJUs)):
+        dJU = dJUs[count]
+        gs = groundstate(max_iter, N, dJU, muU)
+        cns = gs.cns()
 
-    cns = gs.cns()
-    omega0U = gs.omega0U(cns)
-    psi0 = gs.psi0(cns)
-    n0 = gs.n0(cns)
+        exc = excitations(grid, gs, cns)
+        uks, vks, omegaklambda = exc.calculate_matrices()
 
-    plt.plot(cns)
-    plt.xlim(0, 70)
-    plt.show()
-    # psi0 = psi0(cns, N)
-    # n0 = n0(cns, N)
-    # omega0U = omega0(cns, N, dJU, muU, psi0)
-
-    # n0s[count] = n0
-    # omega0U = - 2 * dJU * psi0 * psi0 + omega0U
-    # for dJU in dJUs:
-    #     cns = psi(config["max_iter_psi"], config["grid"]["N"], 0.5, eval(config["physics"]["Mu"]))
-    #     cnslist.append(cns)
-
-    # plot_cns(cnslist, r'$n$', r'$\bar{c}_n$', os.path.join(output_dir, "csn.png") )
+    #     omega0s[count] = omegaklambda[1][5][5]
+    #     omega1s[count] = omegaklambda[2][5][5]
+    #     omega2s[count] = omegaklambda[3][5][5]
+    # omegas[:, 0] = omega0s
+    # omegas[:, 1] = omega1s
+    # omegas[:, 2] = omega2s
+    # plot_omega0(
+    #     omegas,
+    #     r"$2\delta J/U$",
+    #     r"$\omega_{\lambda}(|\vec{k}| = 0)$",
+    #     os.path.join(output_dir, "omega0s.png"),
+    # )
 
 
 if __name__ == "__main__":

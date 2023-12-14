@@ -20,3 +20,14 @@ def plot_cns(cnslist, xlabel, ylabel, output_file, title=None):
     if title:
         plt.title(title)
     plt.savefig(output_file)
+
+
+def plot_omega0(omegaslist, xlabel, ylabel, output_file, title=None):
+    for omegas in omegaslist:
+        plt.plot(omegas)
+    plt.grid()
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    if title:
+        plt.title(title)
+    plt.savefig(output_file)

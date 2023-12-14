@@ -31,7 +31,7 @@ class groundstate:
 
     def omega0U(self, cns):
         ns = np.arange(0, self.N, 1)
-        psi0 = self.psi0(cns, self.N)
+        psi0 = self.psi0(cns)
         return -2 * self.dJU * psi0 * psi0 + np.sum(
             (0.5 * ns * (ns - 1) - self.muU * ns) * cns * cns
         )
