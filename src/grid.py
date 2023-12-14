@@ -5,7 +5,7 @@ import numpy as np
 
 class Grid:
     def __init__(self, Lx, Ly):
-        self.Lx=Lx
+        self.Lx = Lx
         self.Ly = Ly
         self.dkx = 2 * np.pi / Lx
         self.dky = 2 * np.pi / Ly

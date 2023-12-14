@@ -19,10 +19,15 @@ def main():
     print(dJUs)
     cnslist = []
     for dJU in dJUs:
-        cns = psi(config["max_iter_psi"], config["grid"]["N"], dJU, eval(config["physics"]["Mu"]))
+        cns = psi(
+            config["max_iter_psi"],
+            config["grid"]["N"],
+            0.5,
+            eval(config["physics"]["Mu"]),
+        )
         cnslist.append(cns)
 
-    plot_cns(cnslist, r'$n$', r'$\bar{c}_n$', os.path.join(output_dir, "csn.png") )
+    plot_cns(cnslist, r"$n$", r"$\bar{c}_n$", os.path.join(output_dir, "csn.png"))
 
 
 if __name__ == "__main__":

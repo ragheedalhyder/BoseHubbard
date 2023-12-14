@@ -14,7 +14,7 @@ grid:
     #eps: 1e-7
 
 physics:
-    Mu: "np.sqrt(2) - 1"
+    Mu: "1.2"
     dJU:
         start: 0.01
         stop: 0.9

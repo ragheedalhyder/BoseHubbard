@@ -3,6 +3,7 @@ import argparse
 import yaml
 from datetime import datetime
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", help="config file", default="src/config.yml")
