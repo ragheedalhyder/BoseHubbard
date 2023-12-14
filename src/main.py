@@ -23,12 +23,12 @@ def main():
     grid = Grid(Lx, Ly)
 
     gs = groundstate(max_iter, N, dJUs[10], muU)
-    
+
     cns = gs.cns()
     omega0U = gs.omega0U(cns)
     psi0 = gs.psi0(cns)
     n0 = gs.n0(cns)
-    
+
     plt.plot(cns)
     plt.xlim(0, 70)
     plt.show()
