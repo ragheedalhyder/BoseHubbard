@@ -9,11 +9,11 @@ class excitations:
         self.groundstate = groundstate
         self.cns = cns
 
-    # def __str__(self):
-    #     return f"grid = {self.grid}, groundstate = {self.groundstate}"
+    def __str__(self):
+        return f"grid = {self.grid}, groundstate = {self.groundstate}"
 
-    # def __repr__(self):
-    #     return f"grid = {self.grid}, groundstate = {self.groundstate}"
+    def __repr__(self):
+        return f"grid = {self.grid}, groundstate = {self.groundstate}"
 
     def cn(self, n):
         N = self.groundstate.N
@@ -83,7 +83,6 @@ class excitations:
                             * self.cn(m - 1)
                             * self.cn(n + 1)
                         )
-                # print( x, B[5][5])
 
                 AB = np.concatenate((A, B), axis=1)
                 BA = np.concatenate((-B, -A), axis=1)
@@ -92,10 +91,8 @@ class excitations:
 
                 Eigsorted = np.sort(Eigvals)
                 omega0 = Eigsorted[N : 2 * N]
-                # print(omega0)
                 for lambda_ in range(N - 1):
                     omegaklambda[lambda_][kx][ky] = np.real(omega0[lambda_])
-                    # print(omegaklambda[lambda_][kx][ky])
                     doublezero = False
                     if lambda_ == 0:
                         ind = np.where(
@@ -112,9 +109,7 @@ class excitations:
                         omegaklambda[lambda_][kx][ky] = 0
                     else:
                         ind = np.where(Eigvals == omega0[lambda_])
-                        # print(omega0[lambda_])
                         ind1 = ind[0][0]
-                        # print(ind1)
                         if ind[0].size > 1:
                             ind1 = ind[0][1]
                         Norm = 0
@@ -125,11 +120,7 @@ class excitations:
                             np.real(Eigvecs[N : 2 * N - 1, ind1])
                             * np.real(Eigvecs[N : 2 * N - 1, ind1])
                         )
-                        # if(lambda_ == 8):
-                        #     print(Eigvecs[0 : 2 * N - 1, ind1])
                         if round(Norm, 6) <= 0:
-                            # print(dJU, kx, ky, lambda_, Norm, omegaklambda[lambda_][kx][ky])
-                            # print(Eigvecs[0 : 2 * N - 1, ind1])
                             Norm = 1
                         uks[:][kx][ky][lambda_] = np.real(Eigvecs[0:N, ind1]) / np.sqrt(
                             Norm
@@ -138,9 +129,3 @@ class excitations:
                             Eigvecs[N : 2 * N, ind1]
                         ) / np.sqrt(Norm)
         return uks, vks, omegaklambda
-
-
-# plt.plot(dJUs, omega0s)
-# plt.plot(dJUs, omega1s)
-# plt.plot(dJUs, omega2s)
-# plt.show()
