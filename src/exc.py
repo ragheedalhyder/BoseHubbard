@@ -90,42 +90,27 @@ class excitations:
                 Eigvals, Eigvecs = np.linalg.eig(MatAB)
 
                 Eigsorted = np.sort(Eigvals)
+                sorted_indices = np.argsort(Eigvals)
                 omega0 = Eigsorted[N : 2 * N]
-                for lambda_ in range(N - 1):
+                ind = sorted_indices[N : 2 * N]
+
+                uks[:][kx][ky][0] = cns
+                vks[:][kx][ky][0] = np.zeros(N)
+                omegaklambda[0][kx][ky] = 0
+
+                for lambda_ in range(1, N - 1):
+                    ind1 = ind[lambda_]
                     omegaklambda[lambda_][kx][ky] = np.real(omega0[lambda_])
-                    doublezero = False
-                    if lambda_ == 0:
-                        ind = np.where(
-                            np.floor(10 * np.abs(np.real(Eigvals)))
-                            == np.floor(10 * np.abs(omega0[lambda_]))
-                        )
+                    uks_iter = np.real(Eigvecs[0:N, ind1])
+                    vks_iter = np.real(Eigvecs[N : 2 * N, ind1])
 
-                        if ind[0].size > 2:
-                            doublezero = True
+                    Norm = np.dot(uks_iter, uks_iter) - np.dot(vks_iter, vks_iter)
 
-                        for n in range(N):
-                            uks[n][kx][ky][lambda_] = cns[n]
-                            vks[n][kx][ky][lambda_] = 0
-                        omegaklambda[lambda_][kx][ky] = 0
-                    else:
-                        ind = np.where(Eigvals == omega0[lambda_])
-                        ind1 = ind[0][0]
-                        if ind[0].size > 1:
-                            ind1 = ind[0][1]
-                        Norm = 0
-                        Norm = sum(
-                            np.real(Eigvecs[0 : N - 1, ind1])
-                            * np.real(Eigvecs[0 : N - 1, ind1])
-                        ) - sum(
-                            np.real(Eigvecs[N : 2 * N - 1, ind1])
-                            * np.real(Eigvecs[N : 2 * N - 1, ind1])
-                        )
-                        if round(Norm, 6) <= 0:
-                            Norm = 1
-                        uks[:][kx][ky][lambda_] = np.real(Eigvecs[0:N, ind1]) / np.sqrt(
-                            Norm
-                        )
-                        vks[:][kx][ky][lambda_] = np.real(
-                            Eigvecs[N : 2 * N, ind1]
-                        ) / np.sqrt(Norm)
+                    if round(Norm, 6) <= 0:
+                        print("Norm is negative")
+                        Norm = 1
+
+                    uks[:][kx][ky][lambda_] = uks_iter / np.sqrt(Norm)
+                    vks[:][kx][ky][lambda_] = vks_iter / np.sqrt(Norm)
+
         return uks, vks, omegaklambda

@@ -4,11 +4,11 @@ import numpy as np
 
 
 class groundstate:
-    def __init__(self, max_iter, N, dJU, muU):
-        self.max_iter = max_iter
-        self.N = N
-        self.dJU = dJU
-        self.muU = muU
+    def __init__(self, params):
+        self.max_iter = params.max_iter
+        self.N = params.N
+        self.dJU = params.dJU
+        self.muU = params.Mu
 
     def __str__(self):
         return f"max_iter = {self.max_iter}, N = {self.N}, dJU = {self.dJU}, muU = {self.muU}, psi0 = {self.psi0}, n0 = {self.n0}, omega0U = {self.omega0U}"

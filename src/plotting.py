@@ -22,7 +22,7 @@ def plot_cns(cnslist, xlabel, ylabel, output_file, title=None):
     plt.savefig(output_file)
 
 
-def plot_omega0(omegaslist, xlabel, ylabel, output_file = None, title=None, show = None):
+def plot_omega0(omegaslist, xlabel, ylabel, output_file=None, title=None, show=None):
     for omegas in omegaslist:
         plt.plot(omegas)
     plt.grid()

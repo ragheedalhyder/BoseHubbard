@@ -5,7 +5,7 @@ input: ../data/input.txt
 
 output: ../data/output.txt
 
-max_iter_psi: 5000
+
 
 grid:
     N: 10
@@ -13,12 +13,16 @@ grid:
     Ly: 10
     #eps: 1e-7
 
-physics:
-    Mu: "np.sqrt(2) - 1"
-    dJU:
+lists:
+    dJUs:
         start: 0.01
         stop: 0.6
         step: 0.01
+physics:
+    max_iter_psi: 5000
+    dJU: 0.1
+    Mu: "np.sqrt(2) - 1"
     UIB: 0.2
+    cutoff: 3
 
 
