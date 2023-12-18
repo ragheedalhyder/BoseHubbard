@@ -8,7 +8,6 @@ output: ../data/output.txt
 
 
 grid:
-    N: 10
     Lx: 10
     Ly: 10
     #eps: 1e-7
@@ -19,10 +18,10 @@ lists:
         stop: 0.6
         step: 0.01
 physics:
-    max_iter_psi: 5000
+    N: 10
     dJU: 0.1
-    Mu: "np.sqrt(2) - 1"
+    muU: "np.sqrt(2) - 1"
     UIB: 0.2
-    cutoff: 3
+    cutoff: 5
 
 

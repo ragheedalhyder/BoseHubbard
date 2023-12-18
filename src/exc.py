@@ -4,20 +4,27 @@ import numpy as np
 
 
 class excitations:
-    def __init__(self, grid, groundstate, cns):
+    def __init__(self, grid, params, groundstate, cns):
         self.grid = grid
-        self.groundstate = groundstate
+        self.Lx = grid.Lx
+        self.Ly = grid.Ly
+        self.KXs = grid.KXs
+        self.KYs = grid.KYs
+        self.N = params.N
+        self.muU = params.muU
+        self.dJU = params.dJU
         self.cns = cns
+        self.groundstate = groundstate
 
     def __str__(self):
-        return f"grid = {self.grid}, groundstate = {self.groundstate}"
+        return f"grid = {self.grid}"
 
     def __repr__(self):
-        return f"grid = {self.grid}, groundstate = {self.groundstate}"
+        return f"grid = {self.grid}"
 
     def cn(self, n):
-        N = self.groundstate.N
         cns = self.cns
+        N = self.N
         if n == -1:
             return 0
         elif n == N:
@@ -26,19 +33,19 @@ class excitations:
             return cns[n].real
 
     def JkU(self, x):
-        dJU = self.groundstate.dJU
+        dJU = self.dJU
         return dJU - dJU * x
 
     def epsI(self, kx, ky):
         return pow(np.sin(kx / 2), 2) + pow(np.sin(ky / 2), 2)
 
     def calculate_matrices(self):
-        Lx = self.grid.Lx
-        Ly = self.grid.Ly
-        KXs = self.grid.KXs
-        KYs = self.grid.KYs
-        N = self.groundstate.N
-        muU = self.groundstate.muU
+        Lx = self.Lx
+        Ly = self.Ly
+        KXs = self.KXs
+        KYs = self.KYs
+        N = self.N
+        muU = self.muU
         cns = self.cns
 
         psi0 = self.groundstate.psi0(cns)
@@ -94,13 +101,13 @@ class excitations:
                 omega0 = Eigsorted[N : 2 * N]
                 ind = sorted_indices[N : 2 * N]
 
-                uks[:][kx][ky][0] = cns
-                vks[:][kx][ky][0] = np.zeros(N)
-                omegaklambda[0][kx][ky] = 0
+                uks[:, kx, ky, 0] = cns
+                vks[:, kx, ky, 0] = np.zeros(N)
+                omegaklambda[0, kx, ky] = 0
 
                 for lambda_ in range(1, N - 1):
                     ind1 = ind[lambda_]
-                    omegaklambda[lambda_][kx][ky] = np.real(omega0[lambda_])
+                    omegaklambda[lambda_, kx, ky] = np.real(omega0[lambda_])
                     uks_iter = np.real(Eigvecs[0:N, ind1])
                     vks_iter = np.real(Eigvecs[N : 2 * N, ind1])
 
@@ -109,8 +116,11 @@ class excitations:
                     if round(Norm, 6) <= 0:
                         print("Norm is negative")
                         Norm = 1
+                    # print(uks.shape)
+                    # print(uks[:,kx,ky,11].shape)
+                    # print("uk_iter.shape = ",uks_iter.shape)
+                    uks[:, kx, ky, lambda_] = uks_iter / np.sqrt(Norm)
 
-                    uks[:][kx][ky][lambda_] = uks_iter / np.sqrt(Norm)
-                    vks[:][kx][ky][lambda_] = vks_iter / np.sqrt(Norm)
+                    vks[:, kx, ky, lambda_] = vks_iter / np.sqrt(Norm)
 
         return uks, vks, omegaklambda

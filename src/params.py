@@ -1,9 +1,8 @@
 # All parameters of the model are defined here
 
 
-class params:
-    def __init__(self, max_iter, N, dJU, muU, UIB, cutoff):
-        self.max_iter = max_iter
+class Params:
+    def __init__(self, N, dJU, muU, UIB, cutoff, **kwargs):
         self.N = N
         self.dJU = dJU
         self.muU = muU

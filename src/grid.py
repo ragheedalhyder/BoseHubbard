@@ -3,7 +3,7 @@
 import numpy as np
 
 
-class grid:
+class Grid:
     def __init__(self, Lx, Ly):
         self.Lx = Lx
         self.Ly = Ly

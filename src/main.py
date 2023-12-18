@@ -1,8 +1,8 @@
 import numpy as np
 import os
 import utils
-from grid import grid
-from params import params
+from grid import Grid
+from params import Params
 from gs import groundstate
 from exc import excitations
 from vert import vertices
@@ -20,29 +20,35 @@ def main():
 
     Lx = config["grid"]["Lx"]
     Ly = config["grid"]["Ly"]
-    max_iter = config["physics"]["max_iter_psi"]
-    dJUs = np.arange(config["physics"]["dJU"])
-    N = config["grid"]["N"]
-    muU = eval(config["physics"]["Mu"])
-    UIB = config["physics"]["UIB"]
 
-    grid = grid(Lx, Ly)
-    params = params(**config["physics"])
-    print(params)
+    N = config["physics"]["N"]
+    dJUs = np.arange(**config["lists"]["dJUs"])
+    muU = eval(config["physics"]["muU"])
+    UIB = config["physics"]["UIB"]
+    cutoff = config["physics"]["cutoff"]
+
+    grid = Grid(Lx, Ly)
+
     omega0s = np.zeros(len(dJUs))
     omega1s = np.zeros(len(dJUs))
     omega2s = np.zeros(len(dJUs))
     omegas = np.zeros((len(dJUs), 3))
     for count in range(len(dJUs)):
         dJU = dJUs[count]
-        gs = groundstate(max_iter, N, dJU, muU)
+        params = Params(N, dJU, muU, UIB, cutoff)
+        # print(params.muU)
+        gs = groundstate(params)
         cns = gs.cns()
-
-        exc = excitations(grid, gs, cns)
+        n0 = gs.n0(cns)
+        # print(n0)
+        exc = excitations(grid, params, gs, cns)
         uks, vks, omegaklambda = exc.calculate_matrices()
-        vert = vertices(grid, gs, uks, vks, cns, gs.n0)
-        pert = perturbative(grid, gs, vert, UIB)
-        omega0s[count] = pert.sigma0()
+        verts = vertices(grid, gs, uks, vks, cns, n0)
+        pert = perturbative(grid, params, verts, omegaklambda)
+        omega0s[count] = pert.sigma0(n0)
+        omega1s[count] = pert.sigma1()
+        omega2s[count] = pert.sigma2()
+        print(omega0s[count], omega1s[count], omega2s[count])
     #     omega0s[count] = omegaklambda[1][5][5]
     #     omega1s[count] = omegaklambda[2][5][5]
     #     omega2s[count] = omegaklambda[3][5][5]
@@ -54,8 +60,10 @@ def main():
     #     r"$2\delta J/U$",
     #     r"$\omega_{\lambda}(|\vec{k}| = 0)$", show=True
     # )
-    plt.plot(dJUs, omega0s, label=r"$\omega_{0}$")
+    plt.plot(dJUs, omega0s + omega1s + omega2s, label=r"$\omega_{0}$")
     plt.show()
+    # plt.plot(dJUs, omega1s, label=r"$\omega_{0}$")
+    # plt.show()
 
 
 if __name__ == "__main__":
