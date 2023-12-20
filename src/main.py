@@ -32,6 +32,7 @@ def main():
     omega0s = np.zeros(len(dJUs))
     omega1s = np.zeros(len(dJUs))
     omega2s = np.zeros(len(dJUs))
+
     omegas = np.zeros((len(dJUs), 3))
     for count in range(len(dJUs)):
         dJU = dJUs[count]
