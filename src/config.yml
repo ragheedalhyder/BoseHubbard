@@ -13,14 +13,14 @@ grid:
 
 lists:
     dJUs:
-        start: 0.01
-        stop: 0.6
+        start: 0.0
+        stop: 1
         step: 0.005
 physics:
-    N: 10
+    N: 12
     dJU: 0.1
     muU: "np.sqrt(2) - 1"
     UIB: 0.2
-    cutoff: 5
+    cutoff: 4
 
 

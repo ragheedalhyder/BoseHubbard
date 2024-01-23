@@ -2,7 +2,6 @@
 
 import numpy as np
 
-
 class excitations:
     def __init__(self, grid, params, groundstate, cns):
         self.grid = grid
@@ -94,6 +93,9 @@ class excitations:
                 AB = np.concatenate((A, B), axis=1)
                 BA = np.concatenate((-B, -A), axis=1)
                 MatAB = np.concatenate((AB, BA), axis=0)
+                # if kx == 0 and ky == 0:
+                #     print("kx =", KXs[kx], "ky = ", KYs[ky] ,"MatAB = ")
+                #     print('[{}]'.format('; '.join(' '.join(map(str, row)) for row in MatAB)))
                 Eigvals, Eigvecs = np.linalg.eig(MatAB)
 
                 Eigsorted = np.sort(Eigvals)
@@ -108,7 +110,7 @@ class excitations:
                 for lambda_ in range(1, N - 1):
                     ind1 = ind[lambda_]
                     omegaklambda[lambda_, kx, ky] = np.real(omega0[lambda_])
-                    uks_iter = np.real(Eigvecs[0:N, ind1])
+                    uks_iter = np.real(Eigvecs[0 : N , ind1 ])
                     vks_iter = np.real(Eigvecs[N : 2 * N, ind1])
 
                     Norm = np.dot(uks_iter, uks_iter) - np.dot(vks_iter, vks_iter)

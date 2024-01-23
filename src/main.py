@@ -37,18 +37,17 @@ def main():
     for count in range(len(dJUs)):
         dJU = dJUs[count]
         params = Params(N, dJU, muU, UIB, cutoff)
-        # print(params.muU)
         gs = groundstate(params)
         cns = gs.cns()
         n0 = gs.n0(cns)
-        # print(n0)
         exc = excitations(grid, params, gs, cns)
         uks, vks, omegaklambda = exc.calculate_matrices()
         verts = vertices(grid, gs, uks, vks, cns, n0)
         pert = perturbative(grid, params, verts, omegaklambda)
-        omega0s[count] = pert.sigma0(n0)
-        omega1s[count] = pert.sigma1()
-        omega2s[count] = pert.sigma2()
+        Pert_Energy = pert.perturbative_energy(n0)
+        omega0s[count] = Pert_Energy[0]
+        omega1s[count] = Pert_Energy[1]
+        omega2s[count] = Pert_Energy[2]
         print(omega0s[count], omega1s[count], omega2s[count])
     #     omega0s[count] = omegaklambda[1][5][5]
     #     omega1s[count] = omegaklambda[2][5][5]

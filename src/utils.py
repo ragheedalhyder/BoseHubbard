@@ -10,12 +10,10 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
 def create_output_dir():
     output_dir = os.path.join("res", datetime.now().strftime("%Y%m%d-%H%M%S"))
     os.makedirs(output_dir, exist_ok=True)
     return output_dir
-
 
 def read_config(config_file):
     with open(config_file, "r") as f:

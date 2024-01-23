@@ -53,6 +53,5 @@ class vertices:
         ns = np.arange(0, N, 1)
         Wres = sum(
             (ns - n0) * uks[:, kx, ky, lambda_] * vks[:, qx, qy, lambda1]
-            + (ns - n0) * uks[:, qx, qy, lambda1] * vks[:, kx, ky, lambda_]
         )
         return Wres

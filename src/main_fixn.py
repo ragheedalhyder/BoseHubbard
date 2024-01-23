@@ -10,7 +10,6 @@ from pert import perturbative
 from plotting import plot2D, plot_cns, plot_omega0
 import matplotlib.pyplot as plt
 
-
 def main():
     args = utils.parse_args()
 
