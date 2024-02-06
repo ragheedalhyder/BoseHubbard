@@ -10,7 +10,6 @@ from pert import perturbative
 from plotting import plot2D, plot_cns, plot_omega0
 import matplotlib.pyplot as plt
 
-
 def main():
     args = utils.parse_args()
 
@@ -48,7 +47,7 @@ def main():
         omega0s[count] = Pert_Energy[0]
         omega1s[count] = Pert_Energy[1]
         omega2s[count] = Pert_Energy[2]
-        print(omega0s[count], omega1s[count], omega2s[count])
+        # print(omega0s[count], omega1s[count], omega2s[count])
     #     omega0s[count] = omegaklambda[1][5][5]
     #     omega1s[count] = omegaklambda[2][5][5]
     #     omega2s[count] = omegaklambda[3][5][5]

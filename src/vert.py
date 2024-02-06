@@ -18,7 +18,6 @@ class vertices:
         cns = self.cns
         ns = np.arange(0, N, 1)
         Nkres = sum(ns * cns * (uks[:, kx, ky, lambda_] + vks[:, kx, ky, lambda_]))
-        # print("Nkres = ", Nkres, "kx = ", kx, "ky = ", ky, "lambda_ = ", lambda_, "uks = ", uks[:,kx,ky,lambda_], "vks = ", vks[:,kx,ky,lambda_])
         return Nkres
 
     def U(self, kx, ky, lambda_, qx, qy, lambda1):
@@ -55,3 +54,34 @@ class vertices:
             (ns - n0) * uks[:, kx, ky, lambda_] * vks[:, qx, qy, lambda1]
         )
         return Wres
+
+    def U_mat(self):
+        uks_2d = np.reshape(self.uks, (self.uks.shape[0], -1), order='F')
+        ns = np.arange(self.N)
+        # nss = np.tile(ns, uks_2d.T.shape[0])
+        # nss = nss.reshape((uks_2d.T.shape[0], -1))
+        # nss = nss.astype(np.float64)
+        U_2d1 = self.n0 * np.matmul(uks_2d.T, uks_2d)
+        U_2d1[:self.grid.M, :self.grid.M ] = 0
+
+        U_2d2 = np.matmul(ns * uks_2d.T , uks_2d)
+        U_2d = U_2d2 - U_2d1
+        return U_2d
+    
+    def V_mat(self):
+        vks_2d = np.reshape(self.vks, (self.vks.shape[0], -1), order='F')
+        ns = np.arange(self.N)
+        V_2d1 = self.n0 * np.matmul(vks_2d.T, vks_2d)
+        V_2d2 = np.matmul(ns * vks_2d.T , vks_2d)
+        V_2d = V_2d2 - V_2d1
+        return V_2d
+    
+    def W_mat(self):
+        uks_2d = np.reshape(self.uks, (self.uks.shape[0], -1), order='F')
+        vks_2d = np.reshape(self.vks, (self.vks.shape[0], -1), order='F')
+        ns = np.arange(self.N)
+        W_2d1 = self.n0 * np.matmul(uks_2d.T, vks_2d)
+        W_2d2 = np.matmul(ns * vks_2d.T , vks_2d)
+        W_2d = W_2d2 - W_2d1
+        return W_2d
+

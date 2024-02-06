@@ -93,9 +93,7 @@ class excitations:
                 AB = np.concatenate((A, B), axis=1)
                 BA = np.concatenate((-B, -A), axis=1)
                 MatAB = np.concatenate((AB, BA), axis=0)
-                # if kx == 0 and ky == 0:
-                #     print("kx =", KXs[kx], "ky = ", KYs[ky] ,"MatAB = ")
-                #     print('[{}]'.format('; '.join(' '.join(map(str, row)) for row in MatAB)))
+
                 Eigvals, Eigvecs = np.linalg.eig(MatAB)
 
                 Eigsorted = np.sort(Eigvals)
@@ -118,9 +116,92 @@ class excitations:
                     if round(Norm, 6) <= 0:
                         print("Norm is negative")
                         Norm = 1
-                    # print(uks.shape)
-                    # print(uks[:,kx,ky,11].shape)
-                    # print("uk_iter.shape = ",uks_iter.shape)
+
+                    uks[:, kx, ky, lambda_] = uks_iter / np.sqrt(Norm)
+
+                    vks[:, kx, ky, lambda_] = vks_iter / np.sqrt(Norm)
+
+        return uks, vks, omegaklambda
+
+def calculate_vertex_matrices(self):
+        Lx = self.Lx
+        Ly = self.Ly
+        KXs = self.KXs
+        KYs = self.KYs
+        N = self.N
+        muU = self.muU
+        cns = self.cns
+
+        psi0 = self.groundstate.psi0(cns)
+        omega0U = self.groundstate.omega0U(cns)
+
+        L = Lx = Ly
+        A = np.zeros((N, N))
+        B = np.zeros((N, N))
+        uks = np.zeros((N, L, L, N))
+        vks = np.zeros((N, L, L, N))
+        omegaklambda = np.zeros((N, L, L))
+
+        for kx in range(Lx):
+            for ky in range(Ly):
+                x = self.epsI(KXs[kx], KYs[ky])
+                for n in range(N):
+                    for m in range(N):
+                        A[n, m] = (
+                            (0.5 * n * (n - 1) - muU * n - omega0U) * (n == m)
+                            - self.JkU(0)
+                            * psi0
+                            * (np.sqrt(n) * (n == m + 1) + np.sqrt(m) * (n + 1 == m))
+                            - self.JkU(x)
+                            * (
+                                np.sqrt(n)
+                                * np.sqrt(m)
+                                * self.cn(m - 1)
+                                * self.cn(n - 1)
+                                + np.sqrt(n + 1)
+                                * np.sqrt(m + 1)
+                                * self.cn(m + 1)
+                                * self.cn(n + 1)
+                            )
+                        )
+                        B[n, m] = -self.JkU(x) * (
+                            np.sqrt(n)
+                            * np.sqrt(m + 1)
+                            * self.cn(m + 1)
+                            * self.cn(n - 1)
+                            + np.sqrt(n + 1)
+                            * np.sqrt(m)
+                            * self.cn(m - 1)
+                            * self.cn(n + 1)
+                        )
+
+                AB = np.concatenate((A, B), axis=1)
+                BA = np.concatenate((-B, -A), axis=1)
+                MatAB = np.concatenate((AB, BA), axis=0)
+
+                Eigvals, Eigvecs = np.linalg.eig(MatAB)
+
+                Eigsorted = np.sort(Eigvals)
+                sorted_indices = np.argsort(Eigvals)
+                omega0 = Eigsorted[N : 2 * N]
+                ind = sorted_indices[N : 2 * N]
+
+                uks[:, kx, ky, 0] = cns
+                vks[:, kx, ky, 0] = np.zeros(N)
+                omegaklambda[0, kx, ky] = 0
+
+                for lambda_ in range(1, N - 1):
+                    ind1 = ind[lambda_]
+                    omegaklambda[lambda_, kx, ky] = np.real(omega0[lambda_])
+                    uks_iter = np.real(Eigvecs[0 : N , ind1 ])
+                    vks_iter = np.real(Eigvecs[N : 2 * N, ind1])
+
+                    Norm = np.dot(uks_iter, uks_iter) - np.dot(vks_iter, vks_iter)
+
+                    if round(Norm, 6) <= 0:
+                        print("Norm is negative")
+                        Norm = 1
+
                     uks[:, kx, ky, lambda_] = uks_iter / np.sqrt(Norm)
 
                     vks[:, kx, ky, lambda_] = vks_iter / np.sqrt(Norm)
