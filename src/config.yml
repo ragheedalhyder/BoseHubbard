@@ -17,7 +17,7 @@ lists:
         stop: 1
         step: 0.005
 physics:
-    N: 12
+    N: 7
     dJU: 0.1
     muU: "np.sqrt(2) - 1"
     UIB: 0.2

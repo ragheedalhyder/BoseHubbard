@@ -46,7 +46,7 @@ class groundstate:
         i = np.arange(N)
         j = np.arange(N)
 
-        for k in range(10000):
+        for k in range(20000):
             i_matrix, j_matrix = np.meshgrid(i, j)
             mat = (
                 (0.5 * i_matrix * (i_matrix - 1) - muU * i_matrix)

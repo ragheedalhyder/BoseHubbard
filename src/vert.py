@@ -58,12 +58,8 @@ class vertices:
     def U_mat(self):
         uks_2d = np.reshape(self.uks, (self.uks.shape[0], -1), order='F')
         ns = np.arange(self.N)
-        # nss = np.tile(ns, uks_2d.T.shape[0])
-        # nss = nss.reshape((uks_2d.T.shape[0], -1))
-        # nss = nss.astype(np.float64)
         U_2d1 = self.n0 * np.matmul(uks_2d.T, uks_2d)
         U_2d1[:self.grid.M, :self.grid.M ] = 0
-
         U_2d2 = np.matmul(ns * uks_2d.T , uks_2d)
         U_2d = U_2d2 - U_2d1
         return U_2d
@@ -81,7 +77,7 @@ class vertices:
         vks_2d = np.reshape(self.vks, (self.vks.shape[0], -1), order='F')
         ns = np.arange(self.N)
         W_2d1 = self.n0 * np.matmul(uks_2d.T, vks_2d)
-        W_2d2 = np.matmul(ns * vks_2d.T , vks_2d)
+        W_2d2 = np.matmul(ns * uks_2d.T , vks_2d)
         W_2d = W_2d2 - W_2d1
         return W_2d
 
