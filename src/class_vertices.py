@@ -80,4 +80,3 @@ class vertices:
         W_2d2 = np.matmul(ns * uks_2d.T , vks_2d)
         W_2d = W_2d2 - W_2d1
         return W_2d
-

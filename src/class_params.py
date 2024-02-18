@@ -1,6 +1,5 @@
 # All parameters of the model are defined here
 
-
 class Params:
     def __init__(self, N, dJU, muU, UIB, cutoff, Epol = None, **kwargs):
         self.N = N

@@ -1,27 +1,27 @@
 import numpy as np
 import os
-import utils
-from grid import Grid
-from params import Params
-from gs import groundstate
-from exc import excitations
-from vert import vertices
-from pert import perturbative
-from plotting import plot2D, plot_cns, plot_omega0
+import Codes.Python.src.class_utils as class_utils
+from Codes.Python.src.class_grid import Grid
+from Codes.Python.src.class_params import Params
+from Codes.Python.src.class_groundstate import groundstate
+from Codes.Python.src.class_excitations import excitations
+from Codes.Python.src.class_vertices import vertices
+from Codes.Python.src.class_perturbation import perturbative
+from Codes.Python.src.class_plotting import plot2D, plot_cns, plot_omega0
 import matplotlib.pyplot as plt
 
 def main():
-    args = utils.parse_args()
+    args = class_utils.parse_args()
 
-    output_dir = utils.create_output_dir()
+    output_dir = class_utils.create_output_dir()
 
-    config = utils.read_config(args.config)
+    config = class_utils.read_config(args.config)
 
     Lx = config["grid"]["Lx"]
     Ly = config["grid"]["Ly"]
 
     N = config["physics"]["N"]
-    dJUs = np.arange(**config["lists"]["dJUs"])
+    dJUs = np.linspace(**config["lists"]["dJUs"])
     muU = eval(config["physics"]["muU"])
     UIB = config["physics"]["UIB"]
     cutoff = config["physics"]["cutoff"]

@@ -15,7 +15,13 @@ lists:
     dJUs:
         start: 0.0
         stop: 1
-        step: 0.005
+        num: 200
+
+    energies:
+        start: 0.01
+        stop: 0.35
+        num: 300
+
 physics:
     N: 7
     dJU: 0.1
