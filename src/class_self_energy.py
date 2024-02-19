@@ -140,7 +140,7 @@ class Self_Energy:
         sigpol = T_11[indk0, indq0] + T_12[indk0, indq0] + T_21[indk0, indq0] + T_22[indk0, indq0] + Sigma_22
         return np.array([np.real(self.Epol - sigpol), T_11[indk0, indq0], T_12[indk0, indq0], T_21[indk0, indq0], T_22[indk0, indq0], Sigma_22, sigpol], dtype=np.complex128)
 
-    def SigmaPolaron(self):
+    """ def SigmaPolaron(self):
         cutoff = self.cutoff
         Lx = self.Lx
         Ly = self.Ly
@@ -231,4 +231,4 @@ class Self_Energy:
                     indk = lambda_ * M * M + kx * M + ky
                     Sigma22 += 1.0 / (4 * np.pi * np.pi) * dkxs[kx] * dkxs[ky] * T22diag[indk]
         sigpol = T1100[indk0, indq0] + T1200[indk0, indq0] + T2100[indk0, indq0] + T2200[indk0, indq0] + Sigma22
-        return np.array([np.real(Epol - sigpol), T1100[indk0, indq0], T12[indk0, indq0], T2100[indk0, indq0], T2200[indk0, indq0], Sigma22, sigpol], dtype=np.complex128)
+        return np.array([np.real(Epol - sigpol), T1100[indk0, indq0], T12[indk0, indq0], T2100[indk0, indq0], T2200[indk0, indq0], Sigma22, sigpol], dtype=np.complex128) """

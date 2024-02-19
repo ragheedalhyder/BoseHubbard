@@ -84,6 +84,23 @@ class IO:
             f.attrs['n0'] = n0
             f.attrs['N'] = params.N
 
+    def save_to_hdf5_perturbative(self, grid, params, dJU_values, omega0s, omega1s, omega2s):
+        filename = f'../data/Perturbative_UIB_{params.UIB:.2f}_Mu_{params.muU}_M_{grid.M}_N_{params.N}.hdf5'
+
+        with h5py.File(filename, 'w') as f:
+            # Save omega0s, omega1s, omega2s
+            f.create_dataset('omega0s', data=omega0s)
+            f.create_dataset('omega1s', data=omega1s)
+            f.create_dataset('omega2s', data=omega2s)
+            f.create_dataset('dJU_values', data=dJU_values)
+
+
+            # Create attributes for your parameters
+            f.attrs['UIB'] = params.UIB
+            f.attrs['Lx'] = grid.Lx
+            f.attrs['Ly'] = grid.Ly
+            f.attrs['N'] = params.N
+
     def save_to_hdf5_fixed_density_qcorr(self, grid, params, desired_n0, dJU_values, mu_qcorr):
         filename = f'../data/fixed_density_line_chemical_potentials_n0_{desired_n0}_UIB_{params.UIB:.2f}_M_{grid.M}_N_{params.N}.hdf5'
 
@@ -106,6 +123,16 @@ class IO:
             dJU_values = f['dJU_values'][:]
             mu_qcorr = f['mu_qcorr'][:]
         return dJU_values, mu_qcorr
+
+    def read_from_hdf5_perturbative(self, UIB, muU, M, N):
+        filename = f'../data/Perturbative_UIB_{UIB:.2f}_Mu_{muU}_M_{M}_N_{N}.hdf5'
+        with h5py.File(filename, 'r') as f:
+            dJU_values = f['dJU_values'][:]
+            # en_values = f['en_values'][:]
+            omega0s = f['omega0s'][:]
+            omega1s = f['omega1s'][:]
+            omega2s = f['omega2s'][:]
+        return dJU_values, omega0s, omega1s, omega2s
 
     def read_from_hdf5_all_fixed_chemical_potential(self, UIB, muU, M, N):
         filename = f'../data/spectral_funcs_UIB_{UIB:.2f}_Mu_{muU}_M_{M}_N_{N}.hdf5'

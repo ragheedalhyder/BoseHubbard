@@ -1,13 +1,16 @@
+# We calculate only the perturbative energy for a range of dJU values and fixed chemical potential
+
 import numpy as np
-import os
-import Codes.Python.src.class_utils as class_utils
-from Codes.Python.src.class_grid import Grid
-from Codes.Python.src.class_params import Params
-from Codes.Python.src.class_groundstate import groundstate
-from Codes.Python.src.class_excitations import excitations
-from Codes.Python.src.class_vertices import vertices
-from Codes.Python.src.class_perturbation import perturbative
-from Codes.Python.src.class_plotting import plot2D, plot_cns, plot_omega0
+import class_utils as class_utils
+from class_grid import Grid
+from class_params import Params
+from class_groundstate import groundstate
+from class_excitations import excitations
+from class_vertices import vertices
+from class_perturbation import perturbative
+from class_self_energy import Self_Energy
+from class_io import IO
+from class_plotting import plot2D, plot_cns, plot_omega0
 import matplotlib.pyplot as plt
 
 def main():
@@ -27,7 +30,7 @@ def main():
     cutoff = config["physics"]["cutoff"]
 
     grid = Grid(Lx, Ly)
-
+    io = IO()
     omega0s = np.zeros(len(dJUs))
     omega1s = np.zeros(len(dJUs))
     omega2s = np.zeros(len(dJUs))
@@ -47,7 +50,7 @@ def main():
         omega0s[count] = Pert_Energy[0]
         omega1s[count] = Pert_Energy[1]
         omega2s[count] = Pert_Energy[2]
-        # print(omega0s[count], omega1s[count], omega2s[count])
+        print(omega0s[count], omega1s[count], omega2s[count])
     #     omega0s[count] = omegaklambda[1][5][5]
     #     omega1s[count] = omegaklambda[2][5][5]
     #     omega2s[count] = omegaklambda[3][5][5]
@@ -59,8 +62,9 @@ def main():
     #     r"$2\delta J/U$",
     #     r"$\omega_{\lambda}(|\vec{k}| = 0)$", show=True
     # )
-    plt.plot(dJUs, omega0s + omega1s + omega2s, label=r"$\omega_{0}$")
-    plt.show()
+    io.save_to_hdf5_perturbative(grid, params, dJUs, omega0s, omega1s, omega2s)
+    # plt.plot(dJUs, omega0s + omega1s + omega2s, label=r"$\omega_{0}$")
+    # plt.show()
     # plt.plot(dJUs, omega1s, label=r"$\omega_{0}$")
     # plt.show()
 

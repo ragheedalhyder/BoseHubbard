@@ -1,4 +1,5 @@
 data
+src/mats
 res
 .DS_store
 __pycache__
