@@ -20,7 +20,7 @@ lists:
     energies:
         start: 0.01
         stop: 0.35
-        num: 300
+        num: 200
 
 physics:
     N: 7

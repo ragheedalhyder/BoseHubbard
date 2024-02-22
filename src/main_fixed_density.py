@@ -81,7 +81,7 @@ for dJU_ind in range(0, len(dJUs)):
     T22[dJU_ind, :] = SE[4, :]
     T22_F[dJU_ind, :] = SE[5, :]
     SE_SI[dJU_ind, :] = SE[6, :]
-    print("dJU = ", dJU, "muU = ", muU, "n0 = ", n0)
+    # print("dJU = ", dJU, "muU = ", muU, "n0 = ", n0)
     
 # save results to hdf5 file
 io.save_to_hdf5_all_fixed_density(grid, params, desired_n0, dJUs, muUs, en_vector, omega0s, omega1s, omega2s, T11, T12, T21, T22, T22_F, SE_SI)

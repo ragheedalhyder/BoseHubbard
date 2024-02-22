@@ -166,7 +166,8 @@ class IO:
         filename = f'../data/spectral_funcs_UIB_{UIB:.2f}_n0_{n0}_M_{M}_N_{N}.hdf5'
         with h5py.File(filename, 'r') as f:
             dJU_values = f['dJU_values'][:]
-            # en_values = f['en_values'][:]
+            muU_values = f['muU_values'][:]
+            en_values = f['en_values'][:]
             omega0s = f['omega0s'][:]
             omega1s = f['omega1s'][:]
             omega2s = f['omega2s'][:]
@@ -186,9 +187,8 @@ class IO:
                 T22_values.append(group['T22'][:])
                 T22_SE_values.append(group['T22_SE'][:])
                 SE_SI.append(group['SE_SI'][:])
-                en_values = group['en'][:]
 
-        return dJU_values, en_values, omega0s, omega1s, omega2s, T11_values, T12_values, T21_values, T22_values, T22_SE_values, SE_SI
+        return dJU_values, muU_values, en_values, omega0s, omega1s, omega2s, T11_values, T12_values, T21_values, T22_values, T22_SE_values, SE_SI
     # def read_from_hdf5(self, UIB, muU, M, N):
     #     filename = f'../data/spectral_funcs_UIB_{UIB:.2f}_Mu_{muU}_M_{M}_N_{N}.hdf5'
 
