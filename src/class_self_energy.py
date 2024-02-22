@@ -84,10 +84,11 @@ class Self_Energy:
 
         omega_mat = omega_vec[:, np.newaxis] + omega_vec[np.newaxis, :]
         epsI_grid = self.eps_grid()
-        epsI_grid[0, :] = 0
-        epsI_grid[:, 0] = 0
+        epsI_grid[0, :] = self.epsI_vec()
+        epsI_grid[:, 0] = self.epsI_vec().T
         Den2 = self.Epol - omega_mat - dJU * epsI_grid + eta * 1j
-        Den2[0, :] = self.Epol - 0 + eta * 1j
+        Den2[0, :] = self.Epol - self.omega_vec() - dJU * self.epsI_vec() + eta * 1j
+        # Den2[0, :] = self.Epol + eta * 1j
         Den2[:, 0] = Den2[0, :].T
 
         U_mat = UIB * self.vertices.U_mat()
