@@ -87,8 +87,9 @@ class Self_Energy:
         epsI_grid[0, :] = 0
         epsI_grid[:, 0] = 0
         Den2 = self.Epol - omega_mat - dJU * epsI_grid + eta * 1j
-        Den2[0, :] = self.Epol - 0 + eta * 1j
+        Den2[0, :] = self.Epol - self.omega_vec() - dJU * self.epsI_vec() + eta * 1j
         Den2[:, 0] = Den2[0, :].T
+
 
         U_mat = UIB * self.vertices.U_mat()
         V_mat = UIB * self.vertices.V_mat()
