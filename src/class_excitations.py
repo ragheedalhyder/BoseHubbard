@@ -105,7 +105,7 @@ class excitations:
                 vks[:, kx, ky, 0] = np.zeros(N)
                 omegaklambda[0, kx, ky] = 0
 
-                for lambda_ in range(1, N - 1):
+                for lambda_ in range(1, N ):
                     ind1 = ind[lambda_]
                     omegaklambda[lambda_, kx, ky] = np.real(omega0[lambda_])
                     uks_iter = np.real(Eigvecs[0 : N , ind1 ])
@@ -190,7 +190,7 @@ def calculate_vertex_matrices(self):
                 vks[:, kx, ky, 0] = np.zeros(N)
                 omegaklambda[0, kx, ky] = 0
 
-                for lambda_ in range(1, N - 1):
+                for lambda_ in range(1, N):
                     ind1 = ind[lambda_]
                     omegaklambda[lambda_, kx, ky] = np.real(omega0[lambda_])
                     uks_iter = np.real(Eigvecs[0 : N , ind1 ])

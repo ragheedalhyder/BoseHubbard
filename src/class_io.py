@@ -84,6 +84,36 @@ class IO:
             f.attrs['n0'] = n0
             f.attrs['N'] = params.N
 
+    
+    def save_to_hdf5_different_UIBs(self, grid, params, UIBs, en_vector, omega0s, omega1s, omega2s, T11, T12, T21, T22, T22_SE, SE_SI):
+        # Code to save results for different UIBs
+        filename = f'../data/Different_UIBs_dJU_{params.dJU:.2f}_Mu_{params.muU:.2f}_M_{grid.M}_N_{params.N}.hdf5'
+    
+        with h5py.File(filename, 'w') as f:
+            f.create_dataset('UIBs', data=UIBs)
+            f.create_dataset('en_vector', data=en_vector)
+            f.create_dataset('omega0s', data=omega0s)
+            f.create_dataset('omega1s', data=omega1s)
+            f.create_dataset('omega2s', data=omega2s)
+            for i, UIB in enumerate(UIBs):
+            # Create a group for this dJU value
+                group = f.create_group(f'UIB_{UIB}')
+        
+                # Store the arrays in this group
+                group.create_dataset('T11', data=T11[i, :])
+                group.create_dataset('T12', data=T12[i, :])
+                group.create_dataset('T21', data=T21[i, :])
+                group.create_dataset('T22', data=T22[i, :])
+                group.create_dataset('T22_SE', data=T22_SE[i, :])
+                group.create_dataset('SE_SI', data=SE_SI[i, :])
+        
+            # Create attributes for your parameters
+            f.attrs['dJU'] = params.dJU
+            f.attrs['muU'] = params.muU
+            f.attrs['Lx'] = grid.Lx
+            f.attrs['Ly'] = grid.Ly
+            f.attrs['N'] = N
+        
     def save_to_hdf5_perturbative(self, grid, params, dJU_values, omega0s, omega1s, omega2s):
         filename = f'../data/Perturbative_UIB_{params.UIB:.2f}_Mu_{params.muU}_M_{grid.M}_N_{params.N}.hdf5'
 
@@ -102,7 +132,7 @@ class IO:
             f.attrs['N'] = params.N
 
     def save_to_hdf5_fixed_density_qcorr(self, grid, params, desired_n0, dJU_values, mu_qcorr):
-        filename = f'../data/fixed_density_line_chemical_potentials_n0_{desired_n0}_UIB_{params.UIB:.2f}_M_{grid.M}_N_{params.N}.hdf5'
+        filename = f'../data/fixed_density_line_chemical_potentials_n0_{desired_n0}_M_{grid.M}_N_{params.N}.hdf5'
 
         with h5py.File(filename, 'w') as f:
             f.create_dataset('mu_qcorr', data=mu_qcorr)
@@ -115,9 +145,32 @@ class IO:
             f.attrs['muU'] = params.muU
             f.attrs['N'] = params.N
             f.attrs['n0'] = desired_n0
-    
+
+    def save_to_hdf5_fixed_density_Nqcorr(self, grid, params, desired_n0, dJU_values, mu_Nqcorr):
+        filename = f'../data/fixed_density_line_chemical_potentials_Nqcorr_n0_{desired_n0}_M_{grid.M}_N_{params.N}.hdf5'
+
+        with h5py.File(filename, 'w') as f:
+            f.create_dataset('mu_Nqcorr', data=mu_Nqcorr)
+            f.create_dataset('dJU_values', data=dJU_values)
+
+            # Create attributes for your parameters
+            f.attrs['UIB'] = params.UIB
+            f.attrs['Lx'] = grid.Lx
+            f.attrs['Ly'] = grid.Ly
+            f.attrs['muU'] = params.muU
+            f.attrs['N'] = params.N
+            f.attrs['n0'] = desired_n0
+        
+    def read_from_hdf5_fixed_density_Nqcorr(self, grid, params, desired_n0):
+        filename = f'../data/fixed_density_line_chemical_potentials_Nqcorr_n0_{desired_n0}_M_{grid.M}_N_{params.N}.hdf5'
+
+        with h5py.File(filename, 'r') as f:
+            dJU_values = f['dJU_values'][:]
+            mu_Nqcorr = f['mu_Nqcorr'][:]
+        return dJU_values, mu_Nqcorr
+        
     def read_from_hdf5_fixed_density_qcorr(self, grid, params, desired_n0):
-        filename = f'../data/fixed_density_line_chemical_potentials_n0_{desired_n0}_UIB_{params.UIB:.2f}_M_{grid.M}_N_{params.N}.hdf5'
+        filename = f'../data/fixed_density_line_chemical_potentials_n0_{desired_n0}_M_{grid.M}_N_{params.N}.hdf5'
 
         with h5py.File(filename, 'r') as f:
             dJU_values = f['dJU_values'][:]
@@ -166,8 +219,7 @@ class IO:
         filename = f'../data/spectral_funcs_UIB_{UIB:.2f}_n0_{n0}_M_{M}_N_{N}.hdf5'
         with h5py.File(filename, 'r') as f:
             dJU_values = f['dJU_values'][:]
-            muU_values = f['muU_values'][:]
-            en_values = f['en_values'][:]
+            # en_values = f['en_values'][:]
             omega0s = f['omega0s'][:]
             omega1s = f['omega1s'][:]
             omega2s = f['omega2s'][:]
@@ -187,8 +239,9 @@ class IO:
                 T22_values.append(group['T22'][:])
                 T22_SE_values.append(group['T22_SE'][:])
                 SE_SI.append(group['SE_SI'][:])
+                en_values = group['en'][:]
 
-        return dJU_values, muU_values, en_values, omega0s, omega1s, omega2s, T11_values, T12_values, T21_values, T22_values, T22_SE_values, SE_SI
+        return dJU_values, en_values, omega0s, omega1s, omega2s, T11_values, T12_values, T21_values, T22_values, T22_SE_values, SE_SI
     # def read_from_hdf5(self, UIB, muU, M, N):
     #     filename = f'../data/spectral_funcs_UIB_{UIB:.2f}_Mu_{muU}_M_{M}_N_{N}.hdf5'
 
