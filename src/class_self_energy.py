@@ -73,7 +73,6 @@ class Self_Energy:
         dJU = self.dJU
 
         dim = M * self.N
-        eta = 0.005
         omega_vec = self.omega_vec()
         epsI_vec = self.epsI_vec()
         dJU = self.dJU
@@ -94,9 +93,9 @@ class Self_Energy:
 
         U_mat = UIB * self.vertices.U_mat()
         V_mat = UIB * self.vertices.V_mat()
-        W_mat = UIB * (self.vertices.W_mat() + self.vertices.W_mat().T)
+        W_mat = UIB * (self.vertices.W_mat() + self.vertices.W_mat().T) # can be optimized further
 
-        Den1 = self.delete_elements(Den1, np.arange(1,100), axis = 0)
+        Den1 = self.delete_elements(Den1, np.arange(1,100), axis = 0) # where does 100 come from?
         Den2 = self.delete_elements(Den2, np.arange(1,100), axis = 0)
         U_mat = self.delete_elements(U_mat, np.arange(1,100), axis = 0)
         V_mat = self.delete_elements(V_mat, np.arange(1,100), axis = 0)
@@ -107,7 +106,7 @@ class Self_Energy:
         Pair_Prop_12_SE = np.divide(U_mat, Den2) / M
         Pair_Prop_22_SE = np.divide(W_mat, Den2) / M
 
-        Pair_Prop_11_12[0:, 0] = 0
+        Pair_Prop_11_12[0:, 0] = 0 # check this.
         Pair_Prop_21_22[0:, 0] = 0
         Pair_Prop_12_SE[0:, 0] = 0
         Pair_Prop_22_SE[0:, 0] = 0

@@ -101,7 +101,7 @@ class perturbative:
         return Sigma2 / (M * M)
     
 
-    def perturbative_energy(self, n0):
+    def perturbative_energy(self, n0):  # seems like we already have this in the above function?
         deltan2 = 0
         Lx = self.Lx
         Ly = self.Ly

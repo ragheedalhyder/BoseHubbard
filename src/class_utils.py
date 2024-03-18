@@ -6,7 +6,7 @@ from datetime import datetime
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="config file", default="src/config.yml")
+    parser.add_argument("--config", help="config file", default="./config.yml")
     args = parser.parse_args()
     return args
 
