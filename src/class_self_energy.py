@@ -21,16 +21,16 @@ class Self_Energy:
         return f"groundstate = {self.groundstate}, UIB = {self.UIB}, cutoff = {self.cutoff}"
     
     def epsI(self, kx, ky):
-        return pow(np.sin(kx / 2), 2) + pow(np.sin(ky / 2), 2)
+        return pow(np.sin(kx / 2), 2) + pow(np.sin(ky / 2), 2) 
     
-    def epsI_vec(self):
+    def epsI_vec(self): # Impurity energy
         kx_grid = np.repeat(self.grid.KXs, self.grid.Lx)
         ky_grid = np.tile(self.grid.KYs, self.grid.Ly)
         epsI_grid = self.epsI(kx_grid, ky_grid)
         epsI_vec = np.tile(epsI_grid, self.N)
         return epsI_vec
     
-    def omega_vec(self):
+    def omega_vec(self): # mode energy vector
         omegaklambda = self.omegaklambda
         omega_1d = omegaklambda.ravel()
         return omega_1d

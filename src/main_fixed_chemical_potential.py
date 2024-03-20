@@ -28,7 +28,7 @@ muU = eval(config["physics"]["muU"])
 
 UIB = config["physics"]["UIB"]
 cutoff = config["physics"]["cutoff"]
-dJUs = np.arange(**config["lists"]["dJUs"])
+
 
 grid = Grid(Lx, Ly)
 io = IO()
