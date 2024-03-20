@@ -56,10 +56,11 @@ class vertices:
         return Wres
 
     def U_mat(self):
-        uks_2d = np.reshape(self.uks, (self.uks.shape[0], -1), order='F')
+        uks_2d = np.reshape(self.uks, (self.uks.shape[0], -1), order='F') # (7,700)
+        # ‘F’ means to read / write the elements using Fortran-like index order, with the first index changing fastest, and the last index changing slowest
         ns = np.arange(self.N)
-        U_2d1 = self.n0 * np.matmul(uks_2d.T, uks_2d)
-        U_2d1[:self.grid.M, :self.grid.M ] = 0
+        U_2d1 = self.n0 * np.matmul(uks_2d.T, uks_2d) 
+        U_2d1[:self.grid.M, :self.grid.M ] = 0  
         U_2d2 = np.matmul(ns * uks_2d.T , uks_2d)
         U_2d = U_2d2 - U_2d1
         return U_2d

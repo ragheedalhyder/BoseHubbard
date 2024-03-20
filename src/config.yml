@@ -7,8 +7,8 @@ output: ../data/output.txt
 
 
 grid:
-    Lx: 10
-    Ly: 10
+    Lx: 14 #10 sites in x
+    Ly: 14 #10 # sites in y
     #eps: 1e-7
 
 lists:
@@ -23,10 +23,10 @@ lists:
         num: 3 # 200
 
 physics:
-    N: 7
-    dJU: 0.1
+    N: 7 #7 # Num of modes
+    dJU: 0.1 # this is 2 * d * J, so 4J in 2D.
     muU: "np.sqrt(2) - 1"
     UIB: 0.2
-    cutoff: 4
+    cutoff: 4 #4
 
 

@@ -57,7 +57,7 @@ class excitations:
         vks = np.zeros((N, L, L, N))
         omegaklambda = np.zeros((N, L, L))
 
-        for kx in range(Lx):
+        for kx in range(Lx):  # this can be sped up on the square grid.  see my code 
             for ky in range(Ly):
                 x = self.epsI(KXs[kx], KYs[ky])
                 for n in range(N):
