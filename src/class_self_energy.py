@@ -98,6 +98,8 @@ class Self_Energy:
         U_mat = UIB * self.vertices.U_mat()
         V_mat = UIB * self.vertices.V_mat()
         W_mat = UIB * (self.vertices.W_mat() + self.vertices.W_mat().T) # can be optimized further
+
+	
 	
         Den1 = self.delete_elements(Den1, np.arange(1,self.M), axis = 0)
         Den2 = self.delete_elements(Den2, np.arange(1,self.M), axis = 0)
@@ -110,6 +112,34 @@ class Self_Energy:
         Pair_Prop_12_SE = np.divide(U_mat, Den2) / M
         Pair_Prop_22_SE = np.divide(W_mat, Den2) / M
         
+####### testing blocks.  Uncomment the self.delete_element lines before running.
+#####        for ii in range(self.N): # the block
+#####            for i in range(M): # the rows
+#####                for j in np.arange(ii*M,(ii+1)*M): # the columns
+#####                    if Pair_Prop_11_12[i,j] != Pair_Prop_11_12[0,j]:
+#####                        print(f"test error row {i}")
+#####                    if Pair_Prop_21_22[i,j] != Pair_Prop_21_22[0,j]:
+#####                        print(f"test error row {i}")
+#####                    if Pair_Prop_12_SE[i,j] != Pair_Prop_12_SE[0,j]:
+#####                        print(f"test error row {i}") 
+#####                    if Pair_Prop_22_SE[i,j] != Pair_Prop_22_SE[0,j]:
+#####                        print(f"test error row {i}")                                                                               
+#####            print(f"no error in 0{ii} block")
+#####            
+#####            
+#####            for i in range(M): # the columns
+#####                for j in np.arange(ii*M,(ii+1)*M): # the rows
+#####                    if Pair_Prop_11_12[j,i] != Pair_Prop_11_12[j,0]:
+#####                        print(f"test error row {i}")
+#####                    if Pair_Prop_21_22[j,i] != Pair_Prop_21_22[j,0]:
+#####                        print(f"test error row {i}")
+#####                    if Pair_Prop_12_SE[j,i] != Pair_Prop_12_SE[j,0]:
+#####                        print(f"test error row {i}") 
+#####                    if Pair_Prop_22_SE[j,i] != Pair_Prop_22_SE[j,0]:
+#####                        print(f"test error row {i}")                                                                               
+#####            print(f"no error in {ii}0 block")
+#####        print("")
+
 
         # eliminate internal condensate lines
 	# set the zerot column to zero.  I'm not sure that's right.  
@@ -234,8 +264,8 @@ class Self_Energy:
         Sigma_22 = sum(T22_diag[1:]) / M
 #        Sigma_22 = sum(T22_diag[M:]) / M
  
-        indk0 = 0
-        indq0 = 0
+        indk0 = 0 
+        indq0 = 0 # Lx/2 + ?
         sigpol = T_11[indk0, indq0] + T_12[indk0, indq0] + T_21[indk0, indq0] + T_22[indk0, indq0] + Sigma_22
         return np.array([np.real(self.Epol - sigpol), T_11[indk0, indq0], T_12[indk0, indq0], T_21[indk0, indq0], T_22[indk0, indq0], Sigma_22, sigpol], dtype=np.complex128)
 
