@@ -16,7 +16,7 @@ class Self_Energy:
         self.vertices = vertices
         self.omegaklambda = omegaklambda
         self.Epol = Epol
-        self.eta = 0.001
+        self.eta = 0.01#0.001
     
     def __str__(self):
         return f"groundstate = {self.groundstate}, UIB = {self.UIB}, cutoff = {self.cutoff}"
