@@ -27,7 +27,7 @@ class Self_Energy:
         kx_grid = np.repeat(self.grid.KXs, self.grid.Lx)
         ky_grid = np.tile(self.grid.KYs, self.grid.Ly)
         epsI_grid = self.epsI(kx_grid, ky_grid)
-        epsI_vec = np.tile(epsI_grid, self.N)
+        epsI_vec = np.tile(epsI_grid, self.cutoff)
         return epsI_vec
     
     def omega_vec(self): # mode energy vector
@@ -52,8 +52,8 @@ class Self_Energy:
         return Den1
     
     def eps_grid(self):
-        kx_vec =  np.tile(np.repeat(self.grid.KXs, self.grid.Lx), self.N)
-        ky_vec = np.tile(self.grid.KYs, self.grid.Ly * self.N)
+        kx_vec =  np.tile(np.repeat(self.grid.KXs, self.grid.Lx), self.cutoff)
+        ky_vec = np.tile(self.grid.KYs, self.grid.Ly * self.cutoff)
         
         epsI_grid = self.epsI(kx_vec[:, np.newaxis ] + kx_vec[np.newaxis, : ], ky_vec[:, np.newaxis ] + ky_vec[np.newaxis, : ])
         return epsI_grid
@@ -72,7 +72,7 @@ class Self_Energy:
         UIB = self.UIB
         dJU = self.dJU
 
-        dim = M * self.N
+        dim = M * self.cutoff
         eta = 0.005
         omega_vec = self.omega_vec()
         epsI_vec = self.epsI_vec()
@@ -90,7 +90,6 @@ class Self_Energy:
         Den2[0, :] = self.Epol - self.omega_vec() - dJU * self.epsI_vec() + eta * 1j
         # Den2[0, :] = self.Epol + eta * 1j
         Den2[:, 0] = Den2[0, :].T
-
 
         U_mat = UIB * self.vertices.U_mat()
         V_mat = UIB * self.vertices.V_mat()
