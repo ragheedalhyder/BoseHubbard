@@ -22,13 +22,13 @@ class Self_Energy:
         return f"groundstate = {self.groundstate}, UIB = {self.UIB}, cutoff = {self.cutoff}"
     
     def epsI(self, kx, ky):
-        return pow(np.sin(kx / 2), 2) + pow(np.sin(ky / 2), 2) #+ 1 # note the 1!  This is to account for the minimum of the tight-binding band.  Important!
-    
+        return pow(np.sin(kx / 2), 2) + pow(np.sin(ky / 2), 2) #
+        
     def epsI_vec(self):
         kx_grid = np.repeat(self.grid.KXs, self.grid.Lx)
         ky_grid = np.tile(self.grid.KYs, self.grid.Ly)
         epsI_grid = self.epsI(kx_grid, ky_grid)
-        epsI_vec = np.tile(epsI_grid, self.N)
+        epsI_vec = np.tile(epsI_grid, self.cutoff) ##CUTOFF SPEEDU
         return epsI_vec
     
     def omega_vec(self):
@@ -53,8 +53,8 @@ class Self_Energy:
         return Den1
     
     def eps_grid(self):
-        kx_vec =  np.tile(np.repeat(self.grid.KXs, self.grid.Lx), self.N)
-        ky_vec = np.tile(self.grid.KYs, self.grid.Ly * self.N)
+        kx_vec =  np.tile(np.repeat(self.grid.KXs, self.grid.Lx), self.cutoff) ##CUTOFF SPEEDUP
+        ky_vec = np.tile(self.grid.KYs, self.grid.Ly * self.cutoff)
         
         epsI_grid = self.epsI(kx_vec[:, np.newaxis ] + kx_vec[np.newaxis, : ], ky_vec[:, np.newaxis ] + ky_vec[np.newaxis, : ])
         return epsI_grid
@@ -73,7 +73,7 @@ class Self_Energy:
         UIB = self.UIB
         dJU = self.dJU
 
-        dim = M * self.N
+        dim = M * self.cutoff ## CUTOFF SPEEDUP
         omega_vec = self.omega_vec()
         epsI_vec = self.epsI_vec()
         dJU = self.dJU
@@ -92,7 +92,7 @@ class Self_Energy:
         Den2 = self.Epol - omega_mat - dJU * epsI_grid + eta * 1j
         Den2[0, :] = self.Epol - self.omega_vec() - dJU * self.epsI_vec() + eta * 1j # why is there an epsI_vec and a self.epsI_vec
         # Den2[0, :] = self.Epol + eta * 1j
-        Den2[:, 0] = Den2[0, :].T # ?
+        Den2[:, 0] = Den2[0, :].T 
 
 
         U_mat = UIB * self.vertices.U_mat()
@@ -179,7 +179,7 @@ class Self_Energy:
         UIB = self.UIB
         dJU = self.dJU
 
-        dim = M * self.N
+        dim = M * self.cutoff ## CUTOFF SPEEDUP
         omega_vec = self.omega_vec()
         epsI_vec = self.epsI_vec()
         dJU = self.dJU

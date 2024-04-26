@@ -10,6 +10,7 @@ class excitations:
         self.KXs = grid.KXs
         self.KYs = grid.KYs
         self.N = params.N
+        self.cutoff = params.cutoff   ###SPEEDUP
         self.muU = params.muU
         self.dJU = params.dJU
         self.cns = cns
@@ -46,6 +47,7 @@ class excitations:
         N = self.N
         muU = self.muU
         cns = self.cns
+        cutoff = self.cutoff
 
         psi0 = self.groundstate.psi0(cns)
         omega0U = self.groundstate.omega0U(cns)
@@ -53,11 +55,11 @@ class excitations:
         L = Lx = Ly
         A = np.zeros((N, N))
         B = np.zeros((N, N))
-        uks = np.zeros((N, L, L, N))
-        vks = np.zeros((N, L, L, N))
-        omegaklambda = np.zeros((N, L, L))
+        uks = np.zeros((N, L, L, cutoff))
+        vks = np.zeros((N, L, L, cutoff))
+        omegaklambda = np.zeros((cutoff, L, L))
 
-        for kx in range(Lx):  # this can be sped up on the square grid.  see my code 
+        for kx in range(Lx):
             for ky in range(Ly):
                 x = self.epsI(KXs[kx], KYs[ky])
                 for n in range(N):
@@ -105,7 +107,7 @@ class excitations:
                 vks[:, kx, ky, 0] = np.zeros(N)
                 omegaklambda[0, kx, ky] = 0
 
-                for lambda_ in range(1, N - 1):
+                for lambda_ in range(1, cutoff ):
                     ind1 = ind[lambda_]
                     omegaklambda[lambda_, kx, ky] = np.real(omega0[lambda_])
                     uks_iter = np.real(Eigvecs[0 : N , ind1 ])
@@ -122,7 +124,7 @@ class excitations:
                     vks[:, kx, ky, lambda_] = vks_iter / np.sqrt(Norm)
 
         return uks, vks, omegaklambda
-
+        
 def calculate_vertex_matrices(self):
         Lx = self.Lx
         Ly = self.Ly
@@ -190,7 +192,7 @@ def calculate_vertex_matrices(self):
                 vks[:, kx, ky, 0] = np.zeros(N)
                 omegaklambda[0, kx, ky] = 0
 
-                for lambda_ in range(1, N - 1):
+                for lambda_ in range(1, N):
                     ind1 = ind[lambda_]
                     omegaklambda[lambda_, kx, ky] = np.real(omega0[lambda_])
                     uks_iter = np.real(Eigvecs[0 : N , ind1 ])

@@ -27,6 +27,6 @@ physics:
     dJU: 0.17 # this is 2 * d * J, so 4J in 2D.
     muU: "0.35" #"np.sqrt(2) - 1"
     UIB: 0.2
-    cutoff: 4 #4
+    cutoff: 1
 
 
