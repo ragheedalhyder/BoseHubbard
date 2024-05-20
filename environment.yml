@@ -104,4 +104,8 @@ dependencies:
   - zeromq=4.3.5=h965bd2d_0
   - zipp=3.17.0=pyhd8ed1ab_0
   - zstd=1.5.5=h4f39d0f_0
+  - pip:
+      - h5py==3.10.0
+      - scipy==1.12.0
+      - seaborn==0.13.2
 prefix: /Users/ragheed/micromamba/envs/boselattice

@@ -7,8 +7,8 @@ output: ../data/output.txt
 
 
 grid:
-    Lx: 20
-    Ly: 20
+    Lx: 12
+    Ly: 12
     #eps: 1e-7
 
 lists:
@@ -28,5 +28,3 @@ physics:
     muU: "np.sqrt(2) - 1"
     UIB: 0.2
     cutoff: 3
-
-

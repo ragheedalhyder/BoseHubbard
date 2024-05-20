@@ -13,7 +13,7 @@ from class_io import IO
 from class_plotting import plot2D, plot_cns, plot_omega0
 import matplotlib.pyplot as plt
 
-config_path = "config.yml" 
+config_path = "config.yml"
 
 output_dir = class_utils.create_output_dir()
 
@@ -79,4 +79,4 @@ for dJU_ind in range(0, len(dJUs)):
     SE_SI[dJU_ind, :] = SE[6, :]
     
 
-io.save_to_hdf5_fixed_chemical_potentials(grid, params, dJUs, en_vector, omega0s, omega1s, omega2s, T11, T12, T21, T22, T22_F, SE_SI)
+io.save_to_hdf5_all_fixed_chemical_potentials(grid, params, dJUs, en_vector, omega0s, omega1s, omega2s, T11, T12, T21, T22, T22_F, SE_SI)
