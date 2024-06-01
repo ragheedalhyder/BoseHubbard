@@ -16,13 +16,14 @@ class Self_Energy:
         self.vertices = vertices
         self.omegaklambda = omegaklambda
         self.Epol = Epol
-        self.eta = 0.01#0.001
+        self.eta = 0.01#0.01#0.001
     
     def __str__(self):
         return f"groundstate = {self.groundstate}, UIB = {self.UIB}, cutoff = {self.cutoff}"
     
     def epsI(self, kx, ky):
         return pow(np.sin(kx / 2), 2) + pow(np.sin(ky / 2), 2) #
+#        return pow(np.sin(kx / 2), 2) + pow(np.sin(ky / 2), 2) + self.UIB/self.dJU # SELF CONSISTENT ONLY!!!!!!!!!!
         
     def epsI_vec(self):
         kx_grid = np.repeat(self.grid.KXs, self.grid.Lx)
@@ -79,7 +80,6 @@ class Self_Energy:
         dJU = self.dJU
         eta = self.eta
         
-        # a bit mysterious this part...
         # 1-w propagator
         Den1 = self.Epol - omega_vec - dJU * epsI_vec + eta * 1j
         Den1 = np.tile(Den1, (dim,1))
@@ -142,15 +142,11 @@ class Self_Energy:
 
 
         # eliminate internal condensate lines
-	# set the zerot column to zero.  I'm not sure that's right.  
-        Pair_Prop_11_12[:, 0] = 0 # These are not actually equal in this block!
+	# set the zerot column to zero.  
+        Pair_Prop_11_12[:, 0] = 0 
         Pair_Prop_21_22[:, 0] = 0
         Pair_Prop_12_SE[:, 0] = 0
         Pair_Prop_22_SE[:, 0] = 0
-#        Pair_Prop_11_12[0,:] = 0 # These are not actually equal in this block!
-#        Pair_Prop_21_22[0,:] = 0
-#        Pair_Prop_12_SE[0,:] = 0
-#        Pair_Prop_22_SE[0,:] = 0
 
         IMat = np.eye(len(Den1))
 
@@ -160,7 +156,7 @@ class Self_Energy:
         T_21 = W_mat + Pair_Prop_21_22 @ T_11
         T_22 = V_mat + Pair_Prop_21_22 @ T_12
         
-        inv12 = inv(IMat - Pair_Prop_12_SE)
+        inv12 = inv(IMat - Pair_Prop_12_SE) # suspect that this can produce ill-conditioned matrices.  TBC.  np.linalg.cond
         T_12_SE = inv12 @ W_mat
         T_22_SE = V_mat + 0.5 * Pair_Prop_22_SE @ T_12_SE
 
@@ -186,7 +182,6 @@ class Self_Energy:
         eta = self.eta
         
         
-        # a bit mysterious this part...
         # 1-w propagator
         Den1 = self.Epol - omega_vec - dJU * epsI_vec + eta * 1j
         Den1 = np.tile(Den1, (dim,1))
@@ -211,10 +206,6 @@ class Self_Energy:
         W_mat = UIB * (self.vertices.W_mat() + self.vertices.W_mat().T) # can be optimized further
 
 
-# some of these deletions are to remove the internal condensate lines 
-# some are to remove equal contributions
-# ragheed is skeptical of them.  
-
 # In the lambda = lambda' = 0 block all the elements are the same [tbc]
 #        print(Den1.shape)
         Den1 = self.delete_elements(Den1, np.arange(1,self.M), axis = 0)
@@ -230,9 +221,8 @@ class Self_Energy:
         Pair_Prop_12_SE = np.divide(U_mat, Den2) / M # U over 2p denom 
         Pair_Prop_22_SE = np.divide(W_mat, Den2) / M # W over 2p denom
         
-        # eliminate internal condensate lines
-	# set the zerot column to zero.  I'm not sure that's right.  
-        Pair_Prop_11_12[:, 0] = 0 # These are not actually equal in this block!
+
+        Pair_Prop_11_12[:, 0] = 0 # 
         Pair_Prop_21_22[:, 0] = 0
         Pair_Prop_12_SE[:, 0] = 0
         Pair_Prop_22_SE[:, 0] = 0
@@ -259,7 +249,8 @@ class Self_Energy:
         #inv12 = inv(IMat - Pair_Prop_12_SE)
         T_12_SE = W_mat +  Pair_Prop_12_SE @ W_mat
         T_22_SE = V_mat + 0.5 * Pair_Prop_22_SE @ W_mat
-
+         
+         
         T22_diag = np.diag(T_22_SE)
         Sigma_22 = sum(T22_diag[1:]) / M
 #        Sigma_22 = sum(T22_diag[M:]) / M
@@ -270,6 +261,63 @@ class Self_Energy:
         return np.array([np.real(self.Epol - sigpol), T_11[indk0, indq0], T_12[indk0, indq0], T_21[indk0, indq0], T_22[indk0, indq0], Sigma_22, sigpol], dtype=np.complex128)
 
 
+
+    def calculate_self_energy_nsc(self):
+        M = self.grid.M
+        UIB = self.UIB
+        dJU = self.dJU
+
+        dim = M * self.cutoff ## CUTOFF SPEEDUP
+        omega_vec = self.omega_vec()
+        epsI_vec = self.epsI_vec()
+        dJU = self.dJU
+        eta = self.eta
+        
+        # 1-w propagator
+        Den1 = self.Epol - omega_vec - dJU * epsI_vec + eta * 1j
+        Den1 = np.tile(Den1, (dim,1))
+
+        # 2-w propagator
+        omega_mat = omega_vec[:, np.newaxis] + omega_vec[np.newaxis, :]
+        epsI_grid = self.eps_grid()
+        epsI_grid[0, :] = self.epsI_vec()
+        epsI_grid[:, 0] = self.epsI_vec().T
+
+
+        U_mat = UIB * self.vertices.U_mat()
+        V_mat = UIB * self.vertices.V_mat()
+        W_mat = UIB * (self.vertices.W_mat() + self.vertices.W_mat().T) # can be optimized further
+
+	
+	
+        Den1 = self.delete_elements(Den1, np.arange(1,self.M), axis = 0)
+        U_mat = self.delete_elements(U_mat, np.arange(1,self.M), axis = 0)
+        V_mat = self.delete_elements(V_mat, np.arange(1,self.M), axis = 0)
+        W_mat = self.delete_elements(W_mat, np.arange(1,self.M), axis = 0)
+
+        Pair_Prop_11_12 = np.divide(U_mat, Den1) / M
+        Pair_Prop_21_22 = np.divide(W_mat, Den1) / M
+
+
+        # eliminate internal condensate lines
+	# set the zerot column to zero.  
+        Pair_Prop_11_12[:, 0] = 0 
+        Pair_Prop_21_22[:, 0] = 0
+
+        IMat = np.eye(len(Den1))
+
+        inv11 = inv(IMat - Pair_Prop_11_12) # (601 by 601)
+        T_11 = inv11 @ U_mat
+        T_12 = inv11 @ W_mat
+        T_21 = W_mat + Pair_Prop_21_22 @ T_11
+        T_22 = V_mat + Pair_Prop_21_22 @ T_12
+
+
+ 
+        indk0 = 0
+        indq0 = 0
+        sigpol = T_11[indk0, indq0] + T_12[indk0, indq0] + T_21[indk0, indq0] + T_22[indk0, indq0]
+        return sigpol # return just the self energy.  
 
 
 
