@@ -7,8 +7,8 @@ output: ../data/output.txt
 
 
 grid:
-    Lx: 10 #14 #14 #10 sites in x
-    Ly: 10 #14 #14 #10 # sites in y
+    Lx: 6 #14 #14 #10 sites in x
+    Ly: 6 #14 #14 #10 # sites in y
     #eps: 1e-7
 
 lists:
