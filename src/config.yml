@@ -7,8 +7,8 @@ output: ../data/output.txt
 
 
 grid:
-    Lx: 6 #14 #14 #10 sites in x
-    Ly: 6 #14 #14 #10 # sites in y
+    Lx: 10 #14 #14 #10 sites in x
+    Ly: 10 #14 #14 #10 # sites in y
     #eps: 1e-7
 
 lists:
@@ -26,7 +26,7 @@ physics:
     N: 7 # 7 #Fock space cutoff
     dJU: 0.17 # this is 2 * d * J, so 4J in 2D.
     muU: "np.sqrt(2) - 1"
-    UIB: 0.2
+    UIB: 0.5
     cutoff: 3 # Num of modes.  0 is mean field
 
 
