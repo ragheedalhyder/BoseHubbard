@@ -320,3 +320,35 @@ class Self_Energy:
         return sigpol # return just the self energy.  
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
