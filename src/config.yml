@@ -14,8 +14,8 @@ grid:
 lists:
     dJUs:
         start: 0.0
-        stop: 0.5
-        num: 20
+        stop: 0.25
+        num: 100
 
     energies:
         start: 0.01

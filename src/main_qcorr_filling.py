@@ -32,7 +32,7 @@ grid = Grid(Lx, Ly)
 params = Params(N, dJU, muU, UIB, cutoff)
 io = IO()
 
-desired_n0 = 1.0 # desired density line
+desired_n0 = 1.1 # desired density line
 muU_qcorr = np.zeros(len(dJUs))
 dJUmax = (np.sqrt(desired_n0 + 1) - np.sqrt(desired_n0))**2
 
@@ -76,5 +76,5 @@ for count in range(len(dJUs)):
         muU_qcorr[count] = findroot(mu_start, mu_step, dJU, UIB, cutoff, desired_n0)
         print("dJU = ", dJU, "muU = ", muU_qcorr[count])
 
-io.save_to_hdf5_fixed_density_qcorr(grid, params, 0.7, dJUs, muU_qcorr)
+io.save_to_hdf5_fixed_density_qcorr(grid, params, desired_n0, dJUs, muU_qcorr)
 

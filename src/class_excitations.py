@@ -116,7 +116,7 @@ class excitations:
                     Norm = np.dot(uks_iter, uks_iter) - np.dot(vks_iter, vks_iter)
 
                     if round(Norm, 6) <= 0:
-                        print("Norm is negative")
+                        # print("Norm is negative")
                         Norm = 1
 
                     uks[:, kx, ky, lambda_] = uks_iter / np.sqrt(Norm)
